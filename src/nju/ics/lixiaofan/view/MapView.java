@@ -1,4 +1,4 @@
-package view;
+package nju.ics.lixiaofan.view;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -91,11 +91,16 @@ public class MapView extends ViewGroup{
 		setMeasuredDimension(size, size);
 	}
 	
-	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 		int count = getChildCount();
 		for(int i = 0;i < count;i++)
 			getChildAt(i).invalidate();
+	}
+	
+	public static class Coord{
+		public int x, y, w, h;
+		public int arcw ,arch;
+		public int centerX, centerY;
 	}
 }

@@ -7,7 +7,6 @@ public class Car {
 	public int state = 0;//0: still	1: moving	-1: uncertain
 	public byte dir = -1;//0: N	1: S	2: W	3: E
 	public Section loc = null;
-	public int deliveryPhase = 0;
 	public Section dest = null;
 	public boolean isLoading = false;
 	

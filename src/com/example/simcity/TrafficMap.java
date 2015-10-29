@@ -1,15 +1,17 @@
 package com.example.simcity;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import nju.ics.lixiaofan.monitor.AppPkg;
 import nju.ics.lixiaofan.monitor.PkgHandler;
+import nju.ics.lixiaofan.view.CrossingView;
+import nju.ics.lixiaofan.view.MapView;
+import nju.ics.lixiaofan.view.StreetView;
 
-import view.CrossingView;
-import view.MapView;
-import view.StreetView;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -26,8 +28,14 @@ public class TrafficMap {
 	public static Street[] streets = new Street[32];
 	public static Section[] sections = new Section[crossings.length+streets.length];
 	public static ConcurrentHashMap<String,Car> cars = new ConcurrentHashMap<String, Car>();
+	public static List<Citizen> citizens = new ArrayList<Citizen>();
 	public static boolean blink = false;
 //	public static List<List<Sensor>> sensors = new ArrayList<List<Sensor>>();
+	
+	public static final int sh = 2;//street height
+	private static final int sw = sh * 2;//street width
+	private static final int cw = (int) (sh * 1.5);//crossing width
+	private static final int aw = cw / 2;
 	
 	public TrafficMap(MapView map) {
 		int sectIdx = 0;
@@ -64,6 +72,13 @@ public class TrafficMap {
 		
 		setCombined();
 		setDir();
+		
+		StreetView.HEIGHT_PERCENT = (double )sh / (sh+4*sw+4*cw);
+		StreetView.WIDTH_RATIO1 = 1 + 0.5*(sh+cw)/sw;
+		StreetView.WIDTH_RATIO2 = 1 + (double )(sh+cw)/sw;
+		StreetView.ARC_RATIO = (float )aw / sw;
+		StreetView.WIDTH_PERCENT = 2 * StreetView.HEIGHT_PERCENT;
+		CrossingView.SIZE_PERCENT = 1.5 * StreetView.HEIGHT_PERCENT;
 		
 		new Thread(blinkThread).start();
 	}

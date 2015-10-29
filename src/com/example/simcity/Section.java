@@ -4,9 +4,8 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
 
-import view.CrossingView;
-import view.StreetView;
-
+import nju.ics.lixiaofan.view.CrossingView;
+import nju.ics.lixiaofan.view.StreetView;
 
 public class Section {
 	public int id;

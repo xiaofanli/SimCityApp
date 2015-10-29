@@ -1,4 +1,6 @@
-package view;
+package nju.ics.lixiaofan.view;
+
+import nju.ics.lixiaofan.view.MapView.Coord;
 
 import com.example.simcity.Car;
 import com.example.simcity.Section.Crossing;
@@ -18,7 +20,9 @@ public class CrossingView extends View{
 	public int id;
 	private Paint paint = new Paint();
 	public Crossing crossing = null;
-	public static int SIZE = -1;
+	public static double SIZE_PERCENT;
+	public static int SIZE;
+	public Coord coord = new Coord();
 	
 	public CrossingView(Context context) {
 		super(context);
@@ -79,31 +83,31 @@ public class CrossingView extends View{
 //		System.out.println(pw + " " + ph);
 //		int width  = measureDimension(SIZE, widthMeasureSpec);
 //        int height = measureDimension(SIZE, heightMeasureSpec);
-		SIZE = (int) (Math.min(pw, ph)/12.5);
+		SIZE = (int) (Math.min(pw, ph)*SIZE_PERCENT);
         setMeasuredDimension(SIZE, SIZE);                
 	}
 	
-    protected static int measureDimension(int defaultSize, int measureSpec) {
-        int result = defaultSize;
-        int specMode = MeasureSpec.getMode(measureSpec);
-        int specSize = MeasureSpec.getSize(measureSpec);
-                
-        //1. layout给出了确定的值，比如：100dp
-        //2. layout使用的是match_parent，但父控件的size已经可以确定了，比如设置的是具体的值或者match_parent
-        if (specMode == MeasureSpec.EXACTLY) {      
-            result = specSize; //建议：result直接使用确定值
-        } 
-        //1. layout使用的是wrap_content
-        //2. layout使用的是match_parent,但父控件使用的是确定的值或者wrap_content
-        else if (specMode == MeasureSpec.AT_MOST) {            
-            result = Math.min(defaultSize, specSize); //建议：result不能大于specSize
-        } 
-        //UNSPECIFIED,没有任何限制，所以可以设置任何大小
-        //多半出现在自定义的父控件的情况下，期望由自控件自行决定大小
-        else {      
-            result = defaultSize; 
-        }
-        
-        return result;
-    }
+//    protected static int measureDimension(int defaultSize, int measureSpec) {
+//        int result = defaultSize;
+//        int specMode = MeasureSpec.getMode(measureSpec);
+//        int specSize = MeasureSpec.getSize(measureSpec);
+//                
+//        //1. layout给出了确定的值，比如：100dp
+//        //2. layout使用的是match_parent，但父控件的size已经可以确定了，比如设置的是具体的值或者match_parent
+//        if (specMode == MeasureSpec.EXACTLY) {      
+//            result = specSize; //建议：result直接使用确定值
+//        } 
+//        //1. layout使用的是wrap_content
+//        //2. layout使用的是match_parent,但父控件使用的是确定的值或者wrap_content
+//        else if (specMode == MeasureSpec.AT_MOST) {            
+//            result = Math.min(defaultSize, specSize); //建议：result不能大于specSize
+//        } 
+//        //UNSPECIFIED,没有任何限制，所以可以设置任何大小
+//        //多半出现在自定义的父控件的情况下，期望由自控件自行决定大小
+//        else {      
+//            result = defaultSize; 
+//        }
+//        
+//        return result;
+//    }
 }

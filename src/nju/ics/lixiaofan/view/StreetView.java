@@ -1,4 +1,6 @@
-package view;
+package nju.ics.lixiaofan.view;
+
+import nju.ics.lixiaofan.view.MapView.Coord;
 
 import com.example.simcity.Car;
 import com.example.simcity.TrafficMap;
@@ -19,10 +21,16 @@ public class StreetView  extends View{
 	public int id;
 	private Paint paint = new Paint();
 	public Street street = null;
+	public static double WIDTH_PERCENT;
+	public static double WIDTH_RATIO1;
+	public static double WIDTH_RATIO2;
+	public static float ARC_RATIO;
+	public static double HEIGHT_PERCENT;
 	public static int WIDTH;
 	public static int HEIGHT;
 	private static RectF rect = new RectF();
 	public boolean isVertical;
+	public Coord coord = new Coord();
 	
 	public StreetView(Context context) {
 		super(context);
@@ -69,21 +77,21 @@ public class StreetView  extends View{
 		}
 		if(isVertical){
 			if(id < 5 || id > 26)
-				rect.set(0, 0, HEIGHT, (float) (WIDTH*1.375));
+				rect.set(0, 0, HEIGHT, (float) (WIDTH*WIDTH_RATIO1));
 			else if(id == 5 || id == 10 || id == 21 || id == 26)
-				rect.set(0, 0, HEIGHT, (float) (WIDTH*1.75));
+				rect.set(0, 0, HEIGHT, (float) (WIDTH*WIDTH_RATIO2));
 			else
 				rect.set(0, 0, HEIGHT, WIDTH);
 		}
 		else{
 			if(id < 2 || id > 29)
-				rect.set(0, 0, (float) (WIDTH*1.75), HEIGHT);
+				rect.set(0, 0, (float) (WIDTH*WIDTH_RATIO2), HEIGHT);
 			else if(id%8 == 6 || id%8 == 1)
-				rect.set(0, 0, (float) (WIDTH*1.375), HEIGHT);
+				rect.set(0, 0, (float) (WIDTH*WIDTH_RATIO1), HEIGHT);
 			else
 				rect.set(0, 0, WIDTH, HEIGHT);
 		}
-		canvas.drawRoundRect(rect, WIDTH/10, WIDTH/10, paint);
+		canvas.drawRoundRect(rect, WIDTH*ARC_RATIO, WIDTH*ARC_RATIO, paint);
 		if(MapView.showSections){
 			paint.setColor(Color.BLACK);
 			paint.setTextSize(Math.min(rect.width(), rect.height()));
@@ -94,27 +102,23 @@ public class StreetView  extends View{
 	}
 	
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-//		int width = isVertical ? CrossingView.measureDimension(DEFAULT_VIEW_HEIGHT, widthMeasureSpec)
-//				: CrossingView.measureDimension(DEFAULT_VIEW_WIDTH, widthMeasureSpec);
-//		int height = isVertical ? CrossingView.measureDimension(DEFAULT_VIEW_WIDTH, widthMeasureSpec)
-//				: CrossingView.measureDimension(DEFAULT_VIEW_HEIGHT, heightMeasureSpec);
 		int pw = MeasureSpec.getSize(widthMeasureSpec);
 		int ph = MeasureSpec.getSize(heightMeasureSpec);
-		HEIGHT = (int) (Math.min(pw, ph)/25);
-		WIDTH = 4 * HEIGHT;
+		HEIGHT = (int) (Math.min(pw, ph) * HEIGHT_PERCENT);
+		WIDTH = (int) (Math.min(pw, ph) * WIDTH_PERCENT);
 		if(isVertical){
 			if(id < 5 || id > 26)
-				setMeasuredDimension(HEIGHT, (int) (WIDTH*1.375));
+				setMeasuredDimension(HEIGHT, (int) (WIDTH*WIDTH_RATIO1));
 			else if(id == 5 || id == 10 || id == 21 || id == 26)
-				setMeasuredDimension(HEIGHT, (int) (WIDTH*1.75));
+				setMeasuredDimension(HEIGHT, (int) (WIDTH*WIDTH_RATIO2));
 			else
 				setMeasuredDimension(HEIGHT, WIDTH);
 		}
 		else{
 			if(id < 2 || id > 29)
-				setMeasuredDimension((int) (WIDTH*1.75), HEIGHT);
+				setMeasuredDimension((int) (WIDTH*WIDTH_RATIO2), HEIGHT);
 			else if(id%8 == 6 || id%8 == 1)
-				setMeasuredDimension((int) (WIDTH*1.375), HEIGHT);
+				setMeasuredDimension((int) (WIDTH*WIDTH_RATIO1), HEIGHT);
 			else
 				setMeasuredDimension(WIDTH, HEIGHT);
 		}

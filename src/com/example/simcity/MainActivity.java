@@ -3,8 +3,8 @@ package com.example.simcity;
 import java.util.ArrayList;
 import nju.ics.lixiaofan.monitor.AppPkg;
 import nju.ics.lixiaofan.monitor.PkgHandler;
+import nju.ics.lixiaofan.view.MapView;
 
-import view.MapView;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
