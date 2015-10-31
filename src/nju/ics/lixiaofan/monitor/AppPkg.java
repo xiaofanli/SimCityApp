@@ -7,14 +7,23 @@ public class AppPkg implements Serializable{
 	byte type;
 	byte appid;
 	String car;
-	byte dir;
+	int dir;
 	byte cmd;
 	String loc;
 	byte delivid;
-	String src, dst;
+	String src, dest;
 	byte phase;
-	boolean loading;//true:start loading	false:finish loading
-	boolean unloading;//true:start unloading	false:finish unloading
+	boolean loading; //true/false: start/finish loading
+	boolean unloading; //true/false: start/finish unloading
+	
+	String building;
+	String btype; //building type
+	int block;
+	
+	public String citizen;
+	public String gender;
+	public String job;
+	public String act;
 	
 	public AppPkg() {
 	}
@@ -26,31 +35,31 @@ public class AppPkg implements Serializable{
 	}
 	
 	//car settings
-	public void setDir(String car, byte dir) {
+	public void setDir(String car, int dir) {
 		type = 1;
 		this.car = car;
 		this.dir = dir;
 	}
 	
-	public AppPkg(String car, byte cmd) {
+	public void setCmd(String car, byte cmd) {
 		type = 2;
 		this.car = car;
 		this.cmd = cmd;
 	}
 	
-	public AppPkg(String car, byte dir, String loc) {
+	public void setCar(String car, int dir, String loc) {
 		type = 3;
 		this.car = car;
 		this.dir = dir;
 		this.loc = loc;
 	}
 	
-	public AppPkg(String car, byte dir, String loc, String dst) {
+	public void setCar(String car, byte dir, String loc, String dst) {
 		type = 4;
 		this.car = car;
 		this.dir = dir;
 		this.loc = loc;
-		this.dst = dst;
+		this.dest = dst;
 	}
 	
 	public void setLoading(String car, boolean loading){
@@ -65,18 +74,32 @@ public class AppPkg implements Serializable{
 		this.unloading = unloading;
 	}
 	
-	public void setDelivery(byte id, String car, String src, String dst, byte phase) {
+	public void setDelivery(byte id, String car, String src, String dest, byte phase) {
 		type = 7;
 		this.delivid = id;
 		this.car = car;
 		this.src = src;
-		this.dst = dst;
+		this.dest = dest;
 		this.phase = phase;
 	}
 	
-	public void setDelivery(String src, String dst) {
+	public void setDelivery(String src, String dest) {
 		type = 8;
 		this.src = src;
-		this.dst = dst;
+		this.dest = dest;
+	}
+	
+	public void setBuilding(String building, String btype, int block){
+		type = 9;
+		this.building = building;
+		this.btype = btype;
+		this.block = block;
+	}
+	
+	public void setCitizen(String citizen, String gender, String job){
+		type = 10;
+		this.citizen = citizen;
+		this.gender = gender;
+		this.job = job;
 	}
 }

@@ -3,9 +3,8 @@ package com.example.simcity;
 public class Car {
 	public int id;
 	public String name = null;
-	public byte uid;
 	public int state = 0;//0: still	1: moving	-1: uncertain
-	public byte dir = -1;//0: N	1: S	2: W	3: E
+	public int dir = -1;//0: N	1: S	2: W	3: E
 	public Section loc = null;
 	public Section dest = null;
 	public boolean isLoading = false;

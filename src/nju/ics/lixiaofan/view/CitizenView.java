@@ -1,12 +1,13 @@
 package nju.ics.lixiaofan.view;
 
+import com.example.simcity.Citizen;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 
 public class CitizenView extends View{
-	
-	
+	public Citizen citizen = null;
 	
 	public CitizenView(Context context) {
 		super(context);

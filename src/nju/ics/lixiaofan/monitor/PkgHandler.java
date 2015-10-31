@@ -11,6 +11,7 @@ import java.util.Queue;
 
 import android.os.Message;
 
+import com.example.simcity.Building;
 import com.example.simcity.Car;
 import com.example.simcity.Delivery;
 import com.example.simcity.Delivery.DeliveryTask;
@@ -104,12 +105,26 @@ public class PkgHandler implements Runnable{
 					DeliveryTask dtask = new DeliveryTask();
 					dtask.id = p.delivid;
 					dtask.car = Car.carOf(p.car);
-					dtask.src = Section.sectionOf(p.src);
-					dtask.dst = Section.sectionOf(p.dst);
+					dtask.src = p.src;
+					dtask.dest = p.dest;
 					dtask.phase = p.phase;
 					Delivery.dtasks.put(dtask.id, dtask);
 				}
 				break;
+			case 9:{
+				boolean exist = false;
+				for(Building b : TrafficMap.buildings)
+					if(b.name.equals(p.building)){
+						exist = true;
+						break;
+					}
+				if(!exist){
+					Building building = new Building(p.building, p.btype, p.block);
+					TrafficMap.buildings.add(building);
+					TrafficMap.placeBuilding(building);
+				}
+				break;
+			}
 			}
 		}
 	}
@@ -194,7 +209,10 @@ public class PkgHandler implements Runnable{
 			while(true){
 				while(!isConnected){
 					try {
-						socket = new Socket("192.168.1.100", 11111);
+						System.out.println("disconnected");
+//						socket = new Socket("192.168.1.100", 11111);
+						socket = new Socket("114.212.85.205", 11111);
+						System.out.println("connected");
 						in = new ObjectInputStream(socket.getInputStream());
 						out = new ObjectOutputStream(socket.getOutputStream());
 						isConnected = true;

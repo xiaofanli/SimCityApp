@@ -32,11 +32,11 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity{
 	private static Context appCtx, actCtx;
-	private MapView map;
-	private ViewPager pager;
-	private PagerTabStrip tabStrip;
-	private ArrayList<View> viewContainter = new ArrayList<View>();
-	private ArrayList<String> titleContainer = new ArrayList<String>();
+	private static MapView map;
+	private static ViewPager pager;
+	private static PagerTabStrip tabStrip;
+	private static ArrayList<View> viewContainter = new ArrayList<View>();
+	private static ArrayList<String> titleContainer = new ArrayList<String>();
 	public static Spinner spinner;
 	public static ArrayAdapter<String> spinnerAdapter;
 	public static int selectedPage = 0;
@@ -66,6 +66,9 @@ public class MainActivity extends Activity{
 			case R.string.invalidate_view:
 				((View)msg.obj).invalidate();
 				break;
+			case R.string.map_add_view:
+				map.addView((View)msg.obj);
+				break;
 			}
 		};
 	};
@@ -78,7 +81,6 @@ public class MainActivity extends Activity{
 		map = (MapView) findViewById(R.id.mapView);
 		map.setWillNotDraw(false);
 		new TrafficMap(map);
-		
 		pager = (ViewPager) findViewById(R.id.viewPager);
 		tabStrip = (PagerTabStrip) findViewById(R.id.tabStrip);
 		tabStrip.setDrawFullUnderline(false);
@@ -181,13 +183,17 @@ public class MainActivity extends Activity{
 		forwardButton = (Button) viewContainter.get(0).findViewById(R.id.button_forward);
 		forwardButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				PkgHandler.send(new AppPkg(selectedCar.name, (byte) 1));
+				AppPkg p = new AppPkg();
+				p.setCmd(selectedCar.name, (byte) 1);
+				PkgHandler.send(p);
 			}
 		});
 		stopButton = (Button) viewContainter.get(0).findViewById(R.id.button_stop);
 		stopButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				PkgHandler.send(new AppPkg(selectedCar.name, (byte) 0));
+				AppPkg p = new AppPkg();
+				p.setCmd(selectedCar.name, (byte) 0);
+				PkgHandler.send(p);
 			}
 		});
 		if(spinner.getSelectedItem() == null){
@@ -218,7 +224,6 @@ public class MainActivity extends Activity{
 				}
 			}
 		});
-		
 		new Thread(new PkgHandler()).start();
 	}
 

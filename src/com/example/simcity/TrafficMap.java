@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import nju.ics.lixiaofan.monitor.AppPkg;
 import nju.ics.lixiaofan.monitor.PkgHandler;
+import nju.ics.lixiaofan.view.BuildingView;
 import nju.ics.lixiaofan.view.CrossingView;
 import nju.ics.lixiaofan.view.MapView;
 import nju.ics.lixiaofan.view.StreetView;
@@ -29,6 +30,7 @@ public class TrafficMap {
 	public static Section[] sections = new Section[crossings.length+streets.length];
 	public static ConcurrentHashMap<String,Car> cars = new ConcurrentHashMap<String, Car>();
 	public static List<Citizen> citizens = new ArrayList<Citizen>();
+	public static List<Building> buildings = new ArrayList<Building>();
 	public static boolean blink = false;
 //	public static List<List<Sensor>> sensors = new ArrayList<List<Sensor>>();
 	
@@ -43,12 +45,11 @@ public class TrafficMap {
 			crossings[i] = new Crossing();
 			sections[sectIdx++] = crossings[i];
 			crossings[i].id = i;
-			crossings[i].uid = (byte) (40+i);
 			crossings[i].name = "Crossing "+i;
 			crossings[i].view = new CrossingView(MainActivity.getAppContext());
 			crossings[i].view.id = i;
 			crossings[i].view.crossing = crossings[i];
-			SectionClickListener listener = new SectionClickListener(crossings[i]);
+			MyClickListener listener = new MyClickListener(crossings[i]);
 			crossings[i].view.setOnClickListener(listener);
 			crossings[i].view.setOnLongClickListener(listener);
 			map.addView(crossings[i].view);
@@ -58,13 +59,12 @@ public class TrafficMap {
 			streets[i] = new Street();
 			sections[sectIdx++] = streets[i];
 			streets[i].id = i;
-			streets[i].uid = (byte) i;
 			streets[i].name = "Street "+i;
 			streets[i].view = new StreetView(MainActivity.getAppContext());
 			streets[i].view.id = i;
 			streets[i].view.street = streets[i];
 			streets[i].view.isVertical = ((i%8)>1 && (i%8)<6);
-			SectionClickListener listener = new SectionClickListener(streets[i]);
+			MyClickListener listener = new MyClickListener(streets[i]);
 			streets[i].view.setOnClickListener(listener);
 			streets[i].view.setOnLongClickListener(listener);
 			map.addView(streets[i].view);
@@ -78,52 +78,52 @@ public class TrafficMap {
 		StreetView.WIDTH_RATIO2 = 1 + (double )(sh+cw)/sw;
 		StreetView.ARC_RATIO = (float )aw / sw;
 		StreetView.WIDTH_PERCENT = 2 * StreetView.HEIGHT_PERCENT;
+		BuildingView.SIZE_PERCENT = StreetView.WIDTH_PERCENT;
 		CrossingView.SIZE_PERCENT = 1.5 * StreetView.HEIGHT_PERCENT;
 		
 		new Thread(blinkThread).start();
 	}
 	
-	class SectionClickListener implements OnClickListener, OnLongClickListener{
-		Section section = null;
-		public SectionClickListener(Crossing crossing) {
-			section = crossing;
-		}
-		
-		public SectionClickListener(Street street) {
-			section = street;
+	static class MyClickListener implements OnClickListener, OnLongClickListener{
+		private Location loc = null;
+		public MyClickListener(Location loc) {
+			this.loc = loc;
 		}
 		
 		public void onClick(View v) {
 			if(MainActivity.selectedPage == 0){
 				String str = "";
-				if(!section.cars.isEmpty()){
-					str = "Cars:\n";
-					for(Car car : section.cars){
-						str += car.name + " " + car.getDir();
-						str += "\n";
+				if(v instanceof CrossingView || v instanceof StreetView){
+					Section section = (Section )loc;
+					if(!section.cars.isEmpty()){
+						str = "Cars:\n";
+						for(Car car : section.cars){
+							str += car.name + " " + car.getDir();
+							str += "\n";
+						}
 					}
 				}
-				
 				MainActivity.sectionDialog = new AlertDialog.Builder(MainActivity.getActContext())
-				.setTitle(section.name)
+				.setTitle(loc.name)
 				.setMessage(str)
 				.show();
 			}
 			else if(MainActivity.selectedPage == 1){
 				if(MainActivity.delivSrc.getText().equals("")){
-					MainActivity.delivSrc.setText(section.name);
+					MainActivity.delivSrc.setText(loc.name);
 					MainActivity.deleteButton.setEnabled(true);
 				}
 				else if(MainActivity.delivDst.getText().equals("")){
 					String src = MainActivity.delivSrc.getText().toString();
-					if(section.name.equals(src))
+					if(loc.name.equals(src))
 						return;
-					else if(section.isCombined){
-						for(Section s : section.combined)
-							if(s.name.equals(src))
-								return;
+					else if(v instanceof CrossingView || v instanceof StreetView){
+						Section section = (Section )loc;
+						if(section.isCombined && section.combined.contains(Section.sectionOf(src)))
+							return;
 					}
-					MainActivity.delivDst.setText(section.name);
+					
+					MainActivity.delivDst.setText(loc.name);
 					MainActivity.delivButton.setEnabled(true);
 				}
 			}
@@ -131,18 +131,24 @@ public class TrafficMap {
 		
 		private SingleChoiceListener scl = new SingleChoiceListener();
 		public boolean onLongClick(View v) {
-			if(MainActivity.selectedPage == 0){
-				if(MainActivity.spinnerAdapter.getCount() > 0){
-					scl.set(section);
-//					System.out.println(section.name);
-					new AlertDialog.Builder(MainActivity.getActContext())
-					.setTitle(section.name).setSingleChoiceItems(MainActivity.spinnerAdapter, -1, scl)
-					.show();
+			if(v instanceof CrossingView || v instanceof StreetView){
+				Section section = (Section )loc;
+				if(MainActivity.selectedPage == 0){
+					if(MainActivity.spinnerAdapter.getCount() > 0){
+						scl.set(section);
+	//					System.out.println(section.name);
+						new AlertDialog.Builder(MainActivity.getActContext())
+						.setTitle(section.name).setSingleChoiceItems(MainActivity.spinnerAdapter, -1, scl)
+						.show();
+					}
 				}
+				else if(MainActivity.selectedPage == 1)
+					return false;
 			}
-			else if(MainActivity.selectedPage == 1)
+			else if(v instanceof BuildingView)
 				return false;
-			return true;//avoid triggering click event
+			
+			return true; //avoid triggering click event
 		}
 		
 		private class SingleChoiceListener implements DialogInterface.OnClickListener{
@@ -151,7 +157,9 @@ public class TrafficMap {
 				Car car = cars.get(MainActivity.spinnerAdapter.getItem(which));
 //				System.out.println(car.name);
 				if(section.cars.contains(car)){
-					PkgHandler.send(new AppPkg(car.name, car.dir, car.loc.name));
+					AppPkg p = new AppPkg();
+					p.setCar(car.name, car.dir, car.loc.name);
+					PkgHandler.send(p);
 					car.dir = -1;
 					carLeave(car, car.loc);
 				}
@@ -162,8 +170,9 @@ public class TrafficMap {
 						
 					MainActivity.setselectedCar(which);
 					//send car setting
-//					System.out.println(selectedCar.name+" "+selectedCar.dir+" "+selectedCar.loc.name);
-					PkgHandler.send(new AppPkg(car.name, car.dir, car.loc.name));
+					AppPkg p = new AppPkg();
+					p.setCar(car.name, car.dir, car.loc.name);
+					PkgHandler.send(p);
 				}
 				dialog.dismiss();
 			}
@@ -179,7 +188,6 @@ public class TrafficMap {
 			return;
 		carLeave(car, car.loc);
 		
-		section.isOccupied = true;
 		section.cars.add(car);
 		car.loc = section;
 		
@@ -193,7 +201,6 @@ public class TrafficMap {
 		
 		if(section.isCombined){
 			for(Section s : section.combined){
-				s.isOccupied = true;
 				msg = MainActivity.msgHandler.obtainMessage();
 				msg.arg1 = R.string.invalidate_view;
 				if(s instanceof Crossing)
@@ -209,7 +216,6 @@ public class TrafficMap {
 		if(car == null || section == null)
 			return;
 		section.cars.remove(car);
-		section.isOccupied = !section.cars.isEmpty();
 		if(car.loc == section)
 			car.loc = null;
 		
@@ -223,7 +229,6 @@ public class TrafficMap {
 		
 		if(section.isCombined){
 			for(Section s : section.combined){
-				s.isOccupied = !s.cars.isEmpty();
 				msg = MainActivity.msgHandler.obtainMessage();
 				msg.arg1 = R.string.invalidate_view;
 				if(s instanceof Crossing)
@@ -235,7 +240,20 @@ public class TrafficMap {
 		}
 	}
 	
-	public void setDir(){
+	public static void placeBuilding(Building building){
+		building.view = new BuildingView(MainActivity.getAppContext());
+		building.view.building = building;
+		building.view.setOnClickListener(new MyClickListener(building));
+		building.view.setIcon();
+//		map.addView(buidling.view);
+		
+		Message msg = MainActivity.msgHandler.obtainMessage();
+		msg.arg1 = R.string.map_add_view;
+		msg.obj = building.view;
+		MainActivity.msgHandler.sendMessage(msg);
+	}
+	
+	private void setDir(){
 		Set<Section> set = new HashSet<Section>();
 		set.add(streets[8]);
 		set.add(crossings[1]);
@@ -354,6 +372,7 @@ public class TrafficMap {
 					s.combined.add(other);
 					other.cars = s.cars;
 					other.waitingCars = s.waitingCars;
+					other.dir = s.dir;
 				}
 		}
 	}

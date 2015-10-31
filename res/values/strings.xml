@@ -8,5 +8,6 @@
     <string name="close_section_dialog">CLOSE_SECTION_DIALOG</string>
     <string name="spinner_add_car">SPINNER_ADD_CAR</string>
     <string name="invalidate_view">INVALIDATE_VIEW</string>
+    <string name="map_add_view">MAP_ADD_VIEW</string>
 
 </resources>

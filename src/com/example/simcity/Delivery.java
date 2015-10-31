@@ -7,7 +7,7 @@ public class Delivery {
 	
 	public static class DeliveryTask {
 		public int id;
-		public Section src = null, dst = null;
+		public String src = null, dest = null;
 		public Car car = null;
 		public String goods;
 		public int phase;//0: search car; 1: to src 2: to dest

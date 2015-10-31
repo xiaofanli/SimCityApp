@@ -81,6 +81,17 @@ public class MapView extends ViewGroup{
 				y = (StreetView.HEIGHT+CrossingView.SIZE)/2 + StreetView.WIDTH + 
 						(((CrossingView)child).id/3) * (CrossingView.SIZE + StreetView.WIDTH);
 			}
+			else if(child instanceof BuildingView){
+				int block = ((BuildingView) child).building.block;
+				x = (StreetView.HEIGHT+CrossingView.SIZE)/2 + StreetView.WIDTH - BuildingView.SIZE;
+				y = (StreetView.HEIGHT+CrossingView.SIZE)/2 + StreetView.WIDTH - BuildingView.SIZE;
+				int u = BuildingView.SIZE + CrossingView.SIZE;
+				x += (block % 4) * u;
+				y += (block / 4) * u;
+			}
+			else if(child instanceof CitizenView){
+				
+			}
 			child.layout(x, y, x+cw, y+ch);
 		}
 	}

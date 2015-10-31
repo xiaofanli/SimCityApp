@@ -7,13 +7,8 @@ import java.util.Set;
 import nju.ics.lixiaofan.view.CrossingView;
 import nju.ics.lixiaofan.view.StreetView;
 
-public class Section {
-	public int id;
-	public String name = null;
-	public byte uid;
+public class Section extends Location{
 	public int[] dir = {-1, -1};	//dir[1] only for crossings
-	public boolean isOccupied = false;
-	public boolean isFlickering = false;
 	public Queue<Car> cars = new LinkedList<Car>();
 	public boolean isCombined = false;
 	public Set<Section> combined = null;
@@ -31,6 +26,10 @@ public class Section {
 			return TrafficMap.streets[id];
 		else
 			return null;
+	}
+	
+	public boolean isOccupied(){
+		return !cars.isEmpty();
 	}
 	
 	public static class Crossing extends Section{
