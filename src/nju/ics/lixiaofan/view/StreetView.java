@@ -46,52 +46,55 @@ public class StreetView  extends View{
 
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
-		paint.setStyle(Style.FILL);
-		switch(street.cars.size()){
+		int n = street.cars.size();
+		switch(n){
 		case 0:
 			paint.setColor(Color.GREEN); break;
 		case 1:
-			Car car = street.cars.peek();
-			if(car.isLoading && !TrafficMap.blink)
-				return;
-			switch(car.name){
-			case Car.ORANGE:
-				paint.setColor(Color.rgb(255, 97, 0)); break;
-			case Car.BLACK:
-				paint.setColor(Color.BLACK); break;
-			case Car.WHITE:
-				paint.setColor(Color.rgb(255, 222, 173)); break;
-			case Car.RED:
-				paint.setColor(Color.rgb(255, 0, 255)); break;
-			case Car.GREEN:
-				paint.setColor(Color.rgb(34, 139, 34)); break;
-			case Car.SILVER:
-				paint.setColor(Color.GRAY); break;
-			}
-			break;
+			paint.setColor(Color.YELLOW); break;
 		default:
-			if(!TrafficMap.blink)
-				return;
-			paint.setColor(Color.RED);
-			break;
+			paint.setColor(Color.RED); break;
 		}
-		if(isVertical){
-			if(id < 5 || id > 26)
-				rect.set(0, 0, HEIGHT, (float) (WIDTH*WIDTH_RATIO1));
-			else if(id == 5 || id == 10 || id == 21 || id == 26)
-				rect.set(0, 0, HEIGHT, (float) (WIDTH*WIDTH_RATIO2));
-			else
-				rect.set(0, 0, HEIGHT, WIDTH);
+		paint.setStyle(Style.FILL);
+		canvas.drawRoundRect(rect, coord.arcw, coord.arch, paint);
+		
+		if(n > 0){
+			int x = isVertical ? (coord.w - CarView.SIZE) / 2 : (coord.w-n*CarView.SIZE-(n-1)*CarView.INSET) / 2;
+			int y = isVertical ? (coord.h-n*CarView.SIZE-(n-1)*CarView.INSET) / 2 : (coord.h - CarView.SIZE) / 2;
+			for(Car car : street.cars){
+				if(car.isLoading && !TrafficMap.blink){
+					if(isVertical)
+						y += CarView.SIZE + CarView.INSET;
+					else
+						x += CarView.SIZE + CarView.INSET;
+					continue;
+				}
+				switch(car.name){
+				case Car.ORANGE:
+					paint.setColor(0xffffa500); break;
+				case Car.BLACK:
+					paint.setColor(Color.BLACK); break;
+				case Car.WHITE:
+					paint.setColor(Color.WHITE); break;
+				case Car.RED:
+					paint.setColor(Color.RED); break;
+				case Car.GREEN:
+					paint.setColor(Color.GREEN); break;
+				case Car.SILVER:
+					paint.setColor(0xffc0c0c0); break;
+				}
+				paint.setStyle(Style.FILL);
+				canvas.drawRect(x, y, x+CarView.SIZE, y+CarView.SIZE, paint);
+				paint.setColor(Color.BLACK);
+				paint.setStyle(Style.STROKE);
+				canvas.drawRect(x, y, x+CarView.SIZE, y+CarView.SIZE, paint);
+				if(isVertical)
+					y += CarView.SIZE + CarView.INSET;
+				else
+					x += CarView.SIZE + CarView.INSET;
+			}
 		}
-		else{
-			if(id < 2 || id > 29)
-				rect.set(0, 0, (float) (WIDTH*WIDTH_RATIO2), HEIGHT);
-			else if(id%8 == 6 || id%8 == 1)
-				rect.set(0, 0, (float) (WIDTH*WIDTH_RATIO1), HEIGHT);
-			else
-				rect.set(0, 0, WIDTH, HEIGHT);
-		}
-		canvas.drawRoundRect(rect, WIDTH*ARC_RATIO, WIDTH*ARC_RATIO, paint);
+		
 		if(MapView.showSections){
 			paint.setColor(Color.BLACK);
 			paint.setTextSize(Math.min(rect.width(), rect.height()));
@@ -106,21 +109,31 @@ public class StreetView  extends View{
 		int ph = MeasureSpec.getSize(heightMeasureSpec);
 		HEIGHT = (int) (Math.min(pw, ph) * HEIGHT_PERCENT);
 		WIDTH = (int) (Math.min(pw, ph) * WIDTH_PERCENT);
+		CarView.SIZE = (int) (0.8 * HEIGHT);
+		CarView.INSET = (int) (0.2 * HEIGHT);
+		CitizenView.SIZE = (int) (0.64 * HEIGHT);
+		coord.arcw = coord.arch = WIDTH*ARC_RATIO;
+		
 		if(isVertical){
+			coord.w = HEIGHT;
 			if(id < 5 || id > 26)
-				setMeasuredDimension(HEIGHT, (int) (WIDTH*WIDTH_RATIO1));
-			else if(id == 5 || id == 10 || id == 21 || id == 26)
-				setMeasuredDimension(HEIGHT, (int) (WIDTH*WIDTH_RATIO2));
+				coord.h = (int) (WIDTH*WIDTH_RATIO1);
+			else if(id == 5 || id == 10 || id == 21 || id == 26){
+				coord.h = (int) (WIDTH*WIDTH_RATIO2);
+			}
 			else
-				setMeasuredDimension(HEIGHT, WIDTH);
+				coord.h = WIDTH;
 		}
 		else{
+			coord.h = HEIGHT;
 			if(id < 2 || id > 29)
-				setMeasuredDimension((int) (WIDTH*WIDTH_RATIO2), HEIGHT);
+				coord.w = (int) (WIDTH*WIDTH_RATIO2);
 			else if(id%8 == 6 || id%8 == 1)
-				setMeasuredDimension((int) (WIDTH*WIDTH_RATIO1), HEIGHT);
+				coord.w = (int) (WIDTH*WIDTH_RATIO1);
 			else
-				setMeasuredDimension(WIDTH, HEIGHT);
+				coord.w = WIDTH;
 		}
+		rect.set(0, 0, coord.w, coord.h);
+		setMeasuredDimension(coord.w, coord.h);
 	}
 }

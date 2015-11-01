@@ -3,6 +3,7 @@ package com.example.simcity;
 import java.util.ArrayList;
 import nju.ics.lixiaofan.monitor.AppPkg;
 import nju.ics.lixiaofan.monitor.PkgHandler;
+import nju.ics.lixiaofan.view.CitizenView;
 import nju.ics.lixiaofan.view.MapView;
 
 import android.os.Bundle;
@@ -68,6 +69,14 @@ public class MainActivity extends Activity{
 				break;
 			case R.string.map_add_view:
 				map.addView((View)msg.obj);
+				break;
+			case R.string.citizen_update_location:
+				if(msg.obj instanceof CitizenView){
+					CitizenView cv = (CitizenView) msg.obj;
+					int x = (int) (cv.ratioX * map.getWidth());
+					int y = (int) (cv.ratioY * map.getHeight());
+					cv.layout(x, y, x+CitizenView.SIZE, y+CitizenView.SIZE);
+				}
 				break;
 			}
 		};

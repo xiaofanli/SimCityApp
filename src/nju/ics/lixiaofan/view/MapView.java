@@ -111,7 +111,7 @@ public class MapView extends ViewGroup{
 	
 	public static class Coord{
 		public int x, y, w, h;
-		public int arcw ,arch;
+		public float arcw, arch;
 		public int centerX, centerY;
 	}
 }

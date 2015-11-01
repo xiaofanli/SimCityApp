@@ -38,36 +38,49 @@ public class CrossingView extends View{
 	
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
-		paint.setStyle(Style.FILL);
-		switch(crossing.cars.size()){
+		int n = crossing.cars.size();
+		switch(n){
 		case 0:
 			paint.setColor(Color.GREEN); break;
 		case 1:
-			Car car = crossing.cars.peek();
-			if(car.isLoading && !TrafficMap.blink)
-				return;
-			switch(car.name){
-			case Car.ORANGE:
-				paint.setColor(Color.rgb(255, 97, 0)); break;
-			case Car.BLACK:
-				paint.setColor(Color.BLACK); break;
-			case Car.WHITE:
-				paint.setColor(Color.rgb(255, 222, 173)); break;
-			case Car.RED:
-				paint.setColor(Color.rgb(255, 0, 255)); break;
-			case Car.GREEN:
-				paint.setColor(Color.rgb(34, 139, 34)); break;
-			case Car.SILVER:
-				paint.setColor(Color.GRAY); break;
-			}
-			break;
+			paint.setColor(Color.YELLOW); break;
 		default:
-			if(!TrafficMap.blink)
-				return;
-			paint.setColor(Color.RED);
-			break;
+			paint.setColor(Color.RED); break;
 		}
+		paint.setStyle(Style.FILL);
 		canvas.drawCircle(SIZE/2, SIZE/2, SIZE/2, paint);
+		
+		if(n > 0){
+			int x = (coord.w-n*CarView.SIZE-(n-1)*CarView.INSET) / 2;
+			int y = (coord.h - CarView.SIZE) / 2;
+			for(Car car : crossing.cars){
+				if(car.isLoading && !TrafficMap.blink){
+					x += CarView.SIZE + CarView.INSET;
+					continue;
+				}
+				switch(car.name){
+				case Car.ORANGE:
+					paint.setColor(0xffffa500); break;
+				case Car.BLACK:
+					paint.setColor(Color.BLACK); break;
+				case Car.WHITE:
+					paint.setColor(Color.WHITE); break;
+				case Car.RED:
+					paint.setColor(Color.RED); break;
+				case Car.GREEN:
+					paint.setColor(Color.GREEN); break;
+				case Car.SILVER:
+					paint.setColor(0xffc0c0c0); break;
+				}
+				paint.setStyle(Style.FILL);
+				canvas.drawRect(x, y, x+CarView.SIZE, y+CarView.SIZE, paint);
+				paint.setColor(Color.BLACK);
+				paint.setStyle(Style.STROKE);
+				canvas.drawRect(x, y, x+CarView.SIZE, y+CarView.SIZE, paint);
+				x += CarView.SIZE + CarView.INSET;
+			}
+		}
+		
 		if(MapView.showSections){
 			paint.setColor(Color.BLACK);
 			paint.setTextSize(SIZE);
@@ -81,6 +94,7 @@ public class CrossingView extends View{
 		int pw = MeasureSpec.getSize(widthMeasureSpec);
 		int ph = MeasureSpec.getSize(heightMeasureSpec);
 		SIZE = (int) (Math.min(pw, ph)*SIZE_PERCENT);
+		coord.w = coord.h = SIZE;
         setMeasuredDimension(SIZE, SIZE);                
 	}
 }

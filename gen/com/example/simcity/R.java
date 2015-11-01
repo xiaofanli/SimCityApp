@@ -68,6 +68,7 @@ public final class R {
         public static final int app_connected=0x7f050003;
         public static final int app_disconnected=0x7f050004;
         public static final int app_name=0x7f050000;
+        public static final int citizen_update_location=0x7f050009;
         public static final int close_section_dialog=0x7f050005;
         public static final int hello_world=0x7f050002;
         public static final int invalidate_view=0x7f050007;

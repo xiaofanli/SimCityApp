@@ -13,6 +13,7 @@ import android.os.Message;
 
 import com.example.simcity.Building;
 import com.example.simcity.Car;
+import com.example.simcity.Citizen;
 import com.example.simcity.Delivery;
 import com.example.simcity.Delivery.DeliveryTask;
 import com.example.simcity.MainActivity;
@@ -118,13 +119,41 @@ public class PkgHandler implements Runnable{
 						exist = true;
 						break;
 					}
-				if(!exist){
-					Building building = new Building(p.building, p.btype, p.block);
-					TrafficMap.buildings.add(building);
-					TrafficMap.placeBuilding(building);
-				}
+				if(!exist)
+					TrafficMap.add(new Building(p.building, p.btype, p.block));
 				break;
 			}
+			case 10:{
+				boolean exist = false;
+				for(Citizen c : TrafficMap.citizens)
+					if(c.name.equals(p.citizen)){
+						exist = true;
+						break;
+					}
+				if(!exist)
+					TrafficMap.add(new Citizen(p.citizen, p.gender, p.job));
+				break;
+			}
+			case 11:
+				for(Citizen c : TrafficMap.citizens)
+					if(c.name.equals(p.citizen)){
+						c.act = p.act;
+						break;
+					}
+				break;
+			case 12:
+				for(Citizen c : TrafficMap.citizens)
+					if(c.name.equals(p.citizen)){
+						c.view.ratioX = p.ratioX;
+						c.view.ratioY = p.ratioY;
+						
+						Message msg = MainActivity.msgHandler.obtainMessage();
+						msg.arg1 = R.string.citizen_update_location;
+						msg.obj = c.view;
+						MainActivity.msgHandler.sendMessage(msg);
+						break;
+					}
+				break;
 			}
 		}
 	}

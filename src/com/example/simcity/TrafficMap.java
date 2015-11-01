@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import nju.ics.lixiaofan.monitor.AppPkg;
 import nju.ics.lixiaofan.monitor.PkgHandler;
 import nju.ics.lixiaofan.view.BuildingView;
+import nju.ics.lixiaofan.view.CitizenView;
 import nju.ics.lixiaofan.view.CrossingView;
 import nju.ics.lixiaofan.view.MapView;
 import nju.ics.lixiaofan.view.StreetView;
@@ -240,7 +241,8 @@ public class TrafficMap {
 		}
 	}
 	
-	public static void placeBuilding(Building building){
+	public static void add(Building building){
+		buildings.add(building);
 		building.view = new BuildingView(MainActivity.getAppContext());
 		building.view.building = building;
 		building.view.setOnClickListener(new MyClickListener(building));
@@ -250,6 +252,19 @@ public class TrafficMap {
 		Message msg = MainActivity.msgHandler.obtainMessage();
 		msg.arg1 = R.string.map_add_view;
 		msg.obj = building.view;
+		MainActivity.msgHandler.sendMessage(msg);
+	}
+	
+	public static void add(Citizen citizen){
+		citizens.add(citizen);
+		citizen.view = new CitizenView(MainActivity.getAppContext());
+		citizen.view.citizen = citizen;
+//		citizen.view.setOnClickListener(new MyClickListener(building));
+//		map.addView(buidling.view);
+		
+		Message msg = MainActivity.msgHandler.obtainMessage();
+		msg.arg1 = R.string.map_add_view;
+		msg.obj = citizen.view;
 		MainActivity.msgHandler.sendMessage(msg);
 	}
 	
