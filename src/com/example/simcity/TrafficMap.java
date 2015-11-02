@@ -85,7 +85,7 @@ public class TrafficMap {
 		new Thread(blinkThread).start();
 	}
 	
-	static class MyClickListener implements OnClickListener, OnLongClickListener{
+	private static class MyClickListener implements OnClickListener, OnLongClickListener{
 		private Location loc = null;
 		public MyClickListener(Location loc) {
 			this.loc = loc;
@@ -259,6 +259,18 @@ public class TrafficMap {
 		citizens.add(citizen);
 		citizen.view = new CitizenView(MainActivity.getAppContext());
 		citizen.view.citizen = citizen;
+		citizen.view.color = citizen.color;
+		citizen.view.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				if(v instanceof CitizenView){
+					Citizen c = ((CitizenView ) v).citizen;
+					new AlertDialog.Builder(MainActivity.getActContext())
+					.setTitle(c.name)
+					.setMessage(c.act)
+					.show();
+				}
+			}
+		});
 //		citizen.view.setOnClickListener(new MyClickListener(building));
 //		map.addView(buidling.view);
 		

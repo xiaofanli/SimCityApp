@@ -68,15 +68,18 @@ public class MainActivity extends Activity{
 				((View)msg.obj).invalidate();
 				break;
 			case R.string.map_add_view:
+				if(msg.obj instanceof CitizenView)
+					((View) msg.obj).setVisibility(View.INVISIBLE);
 				map.addView((View)msg.obj);
 				break;
 			case R.string.citizen_update_location:
 				if(msg.obj instanceof CitizenView){
-					CitizenView cv = (CitizenView) msg.obj;
-					int x = (int) (cv.ratioX * map.getWidth());
-					int y = (int) (cv.ratioY * map.getHeight());
-					cv.layout(x, y, x+CitizenView.SIZE, y+CitizenView.SIZE);
+					map.requestLayout();
 				}
+				break;
+			case R.string.citizen_set_visibility:
+				if(msg.obj instanceof CitizenView)
+					((CitizenView) msg.obj).setVisibility(msg.arg2);
 				break;
 			}
 		};

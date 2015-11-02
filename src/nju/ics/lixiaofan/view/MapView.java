@@ -90,7 +90,8 @@ public class MapView extends ViewGroup{
 				y += (block / 4) * u;
 			}
 			else if(child instanceof CitizenView){
-				
+				x = (int) (((CitizenView)child).ratioX * getWidth());
+				y = (int) (((CitizenView)child).ratioY * getHeight());
 			}
 			child.layout(x, y, x+cw, y+ch);
 		}

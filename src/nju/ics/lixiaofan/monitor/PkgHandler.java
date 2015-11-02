@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import android.os.Message;
+import android.view.View;
 
 import com.example.simcity.Building;
 import com.example.simcity.Car;
@@ -131,7 +132,7 @@ public class PkgHandler implements Runnable{
 						break;
 					}
 				if(!exist)
-					TrafficMap.add(new Citizen(p.citizen, p.gender, p.job));
+					TrafficMap.add(new Citizen(p.citizen, p.gender, p.job, p.color));
 				break;
 			}
 			case 11:
@@ -151,6 +152,18 @@ public class PkgHandler implements Runnable{
 						msg.arg1 = R.string.citizen_update_location;
 						msg.obj = c.view;
 						MainActivity.msgHandler.sendMessage(msg);
+						break;
+					}
+				break;
+			case 13:
+				for(Citizen c : TrafficMap.citizens)
+					if(c.name.equals(p.citizen)){
+						Message msg = MainActivity.msgHandler.obtainMessage();
+						msg.arg1 = R.string.citizen_set_visibility;
+						msg.arg2 = p.isVisible ? View.VISIBLE : View.INVISIBLE;
+						msg.obj = c.view;
+						MainActivity.msgHandler.sendMessage(msg);
+//						System.out.println("visible: " + p.isVisible);
 						break;
 					}
 				break;
@@ -238,10 +251,10 @@ public class PkgHandler implements Runnable{
 			while(true){
 				while(!isConnected){
 					try {
-						System.out.println("disconnected");
+//						System.out.println("disconnected");
 //						socket = new Socket("192.168.1.100", 11111);
 						socket = new Socket("114.212.85.205", 11111);
-						System.out.println("connected");
+//						System.out.println("connected");
 						in = new ObjectInputStream(socket.getInputStream());
 						out = new ObjectOutputStream(socket.getOutputStream());
 						isConnected = true;

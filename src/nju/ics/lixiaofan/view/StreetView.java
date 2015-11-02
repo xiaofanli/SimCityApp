@@ -28,7 +28,7 @@ public class StreetView  extends View{
 	public static double HEIGHT_PERCENT;
 	public static int WIDTH;
 	public static int HEIGHT;
-	private static RectF rect = new RectF();
+	private RectF rect = new RectF();
 	public boolean isVertical;
 	public Coord coord = new Coord();
 	

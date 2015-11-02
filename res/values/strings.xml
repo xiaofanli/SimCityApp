@@ -10,5 +10,6 @@
     <string name="invalidate_view">INVALIDATE_VIEW</string>
     <string name="map_add_view">MAP_ADD_VIEW</string>
     <string name="citizen_update_location">CITIZEN_UPDATE_LOCATION</string>
+    <string name="citizen_set_visibility">CITIZEN_SET_VISIBILITY</string>
 
 </resources>
