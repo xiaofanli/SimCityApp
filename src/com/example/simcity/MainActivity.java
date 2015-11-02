@@ -74,7 +74,7 @@ public class MainActivity extends Activity{
 				break;
 			case R.string.citizen_update_location:
 				if(msg.obj instanceof CitizenView){
-					map.requestLayout();
+					((View) msg.obj).requestLayout();
 				}
 				break;
 			case R.string.citizen_set_visibility:
