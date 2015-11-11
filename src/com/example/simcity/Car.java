@@ -25,6 +25,19 @@ public class Car {
 			return null;
 	}
 	
+	public String getState(){
+		switch(state){
+		case 0:
+			return "Stopped";
+		case 1:
+			return "Moving";
+		case -1:
+			return "Uncertain";
+		default:
+			return null;	
+		}
+	}
+	
 	public String getDir(){
 		switch(dir){
 		case 0:

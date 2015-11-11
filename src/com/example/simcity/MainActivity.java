@@ -1,6 +1,10 @@
 package com.example.simcity;
 
 import java.util.ArrayList;
+
+import com.example.simcity.Section.Crossing;
+import com.example.simcity.Section.Street;
+
 import nju.ics.lixiaofan.monitor.AppPkg;
 import nju.ics.lixiaofan.monitor.PkgHandler;
 import nju.ics.lixiaofan.view.CitizenView;
@@ -45,8 +49,9 @@ public class MainActivity extends Activity{
 	public static Button forwardButton, stopButton, delivButton, deleteButton;
 	public static RadioButton[] dirButton = new RadioButton[4];
 	public static RadioGroup dirRadioGroup = null;
-	public static TextView delivSrc, delivDst;
+	public static TextView focusText, delivText, delivSrc, delivDst;
 	public static AlertDialog sectionDialog = null;
+	public static Object focus = null;
 	
 	public static final Handler msgHandler = new Handler(){
 		public void handleMessage(Message msg) {
@@ -80,6 +85,31 @@ public class MainActivity extends Activity{
 			case R.string.citizen_set_visibility:
 				if(msg.obj instanceof CitizenView)
 					((CitizenView) msg.obj).setVisibility(msg.arg2);
+				break;
+			case R.string.update_focus:
+				if(msg.obj instanceof String){
+					String s = (String) msg.obj;
+					focusText.setText(s);
+				}
+				else if(msg.obj instanceof Car){
+					Car car = (Car) msg.obj;
+					if(car.loc != null){
+						if(car.loc instanceof Crossing)
+							((Crossing) car.loc).view.invalidate();
+						else if(car.loc instanceof Street)
+							((Street) car.loc).view.invalidate();
+					}
+				}
+				else if(msg.obj instanceof Section){
+					if(msg.obj instanceof Crossing)
+						((Crossing) msg.obj).view.invalidate();
+					else if(msg.obj instanceof Street)
+						((Street) msg.obj).view.invalidate();
+				}
+				else if(msg.obj instanceof Building)
+					((Building) msg.obj).view.invalidate();
+				else if(msg.obj instanceof Citizen)
+					((Citizen) msg.obj).view.invalidate();
 				break;
 			}
 		};
@@ -141,11 +171,8 @@ public class MainActivity extends Activity{
 		spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 			public void onItemSelected(AdapterView<?> parent, View view,
 					int position, long id) {
-				setselectedCar(position);
-//				synchronized (spinner) {
-//					spinner.notifyAll();
-//					System.out.println("notify");
-//				}
+				setSelectedCar(position);
+				updateFocus(selectedCar);
 			}
 
 			public void onNothingSelected(AdapterView<?> parent) {
@@ -212,7 +239,8 @@ public class MainActivity extends Activity{
 			forwardButton.setEnabled(false);
 			stopButton.setEnabled(false);
 		}
-		
+		focusText = (TextView) viewContainter.get(0).findViewById(R.id.textView_focus);
+		delivText = (TextView) viewContainter.get(1).findViewById(R.id.textView_delivery);
 		delivSrc = (TextView) viewContainter.get(1).findViewById(R.id.textView_src);
 		delivDst = (TextView) viewContainter.get(1).findViewById(R.id.textView_dst);
 		delivButton = (Button) viewContainter.get(1).findViewById(R.id.button_deliver);
@@ -255,7 +283,7 @@ public class MainActivity extends Activity{
 		return false;
 	}
 
-	public static void setselectedCar(int position){
+	public static void setSelectedCar(int position){
 		selectedCar = TrafficMap.cars.get(spinnerAdapter.getItem(position));
 		if(selectedCar != null){
 			forwardButton.setEnabled(true);
@@ -286,6 +314,60 @@ public class MainActivity extends Activity{
 //				PkgHandler.send(new AppPkg(selectedCar.name, selectedCar.dir, null));
 			}
 		}
+	}
+	
+	public static void updateFocus(Object obj){
+		String str = null;
+		if(obj instanceof Car){
+			Car car = (Car )obj;
+			str = car.name+" (" + car.getState() + ") "+car.getDir();
+			if(car.loc != null)
+				str += "\nLoc: " + car.loc.name;
+			if(car.dest != null)
+				str += "\nDest: " + car.dest.name;
+		}
+		else if(obj instanceof Section){
+			Section section = (Section )obj;
+			str = section.name+"\n";
+			if(!section.cars.isEmpty()){
+				str += "Cars:\n";
+				for(Car car : section.cars){
+					str += car.name + " (" + car.getState() + ") "+car.getDir();
+					if(car.dest != null)
+						str += " Dest: " + car.dest.name;
+					str += "\n";
+				}
+			}
+		}
+		else if(obj instanceof Building){
+			Building b = (Building )obj;
+			str = b.name +" ("+b.type+")";
+		}
+		else if(obj instanceof Citizen){
+			Citizen c = (Citizen )obj;
+			str = c.name + " (" + c.gender + ")\n";
+			str += c.job + "\n";
+			str += c.act + "\n";
+		}
+		else
+			return;
+		
+		Message msg = MainActivity.msgHandler.obtainMessage();
+		msg.arg1 = R.string.update_focus;
+		msg.obj = str;
+		MainActivity.msgHandler.sendMessage(msg);
+		
+		msg = MainActivity.msgHandler.obtainMessage();
+		msg.arg1 = R.string.update_focus;
+		msg.obj = focus;
+		MainActivity.msgHandler.sendMessage(msg);
+		
+		msg = MainActivity.msgHandler.obtainMessage();
+		msg.arg1 = R.string.update_focus;
+		msg.obj = obj;
+		MainActivity.msgHandler.sendMessage(msg);
+		
+		focus = obj;
 	}
 	
 	public static Context getAppContext(){

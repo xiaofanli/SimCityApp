@@ -1,6 +1,7 @@
 package nju.ics.lixiaofan.view;
 
 import com.example.simcity.Citizen;
+import com.example.simcity.MainActivity;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -35,7 +36,10 @@ public class CitizenView extends View{
 		paint.setStyle(Style.FILL);
 		canvas.drawCircle(SIZE/2, SIZE/2, SIZE/2, paint);
 //		canvas.drawRect(0, 0, SIZE, SIZE, paint);
-		paint.setColor(Color.BLACK);
+		if(MainActivity.focus != citizen)
+			paint.setColor(Color.BLACK);
+		else
+			paint.setColor(Color.RED);
 		paint.setStyle(Style.STROKE);
 		canvas.drawCircle(SIZE/2, SIZE/2, SIZE/2, paint);
 //		canvas.drawRect(0, 0, SIZE, SIZE, paint);

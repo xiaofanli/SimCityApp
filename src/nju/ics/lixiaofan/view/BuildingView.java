@@ -11,6 +11,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
@@ -19,6 +22,7 @@ public class BuildingView extends ImageView{
 	public static int SIZE;
 	public static double SIZE_PERCENT;
 	public Coord coord = new Coord();
+	Paint paint = new Paint();
 	
 	public BuildingView(Context context) {
 		super(context);
@@ -34,6 +38,11 @@ public class BuildingView extends ImageView{
 	
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
+		if(MainActivity.focus == building){
+			paint.setColor(Color.RED);
+			paint.setStyle(Style.STROKE);
+			canvas.drawRect(0, 0, SIZE, SIZE, paint);
+		}
 	}
 	
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {

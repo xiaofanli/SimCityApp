@@ -23,6 +23,7 @@ import com.example.simcity.Section;
 import com.example.simcity.TrafficMap;
 
 public class PkgHandler implements Runnable{
+	private static String pc = "114.212.85.205";//"192.168.1.100";
 	private static Queue<AppPkg> queue = new LinkedList<AppPkg>();
 	private static Sender sender = new Sender();
 	private static Receiver receiver = new Receiver(queue);
@@ -251,10 +252,7 @@ public class PkgHandler implements Runnable{
 			while(true){
 				while(!isConnected){
 					try {
-//						System.out.println("disconnected");
-//						socket = new Socket("192.168.1.100", 11111);
-						socket = new Socket("114.212.85.205", 11111);
-//						System.out.println("connected");
+						socket = new Socket(pc, 11111);
 						in = new ObjectInputStream(socket.getInputStream());
 						out = new ObjectOutputStream(socket.getOutputStream());
 						isConnected = true;

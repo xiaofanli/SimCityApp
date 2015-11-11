@@ -81,13 +81,12 @@
         android:background="@drawable/textview_border" />
 
     <TextView
-        android:id="@+id/textView_car"
+        android:id="@+id/textView_focus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/textView_line"
-        android:text="car"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 </RelativeLayout>

@@ -93,21 +93,22 @@ public class TrafficMap {
 		
 		public void onClick(View v) {
 			if(MainActivity.selectedPage == 0){
-				String str = "";
-				if(v instanceof CrossingView || v instanceof StreetView){
-					Section section = (Section )loc;
-					if(!section.cars.isEmpty()){
-						str = "Cars:\n";
-						for(Car car : section.cars){
-							str += car.name + " " + car.getDir();
-							str += "\n";
-						}
-					}
-				}
-				MainActivity.sectionDialog = new AlertDialog.Builder(MainActivity.getActContext())
-				.setTitle(loc.name)
-				.setMessage(str)
-				.show();
+//				String str = "";
+//				if(v instanceof CrossingView || v instanceof StreetView){
+//					Section section = (Section )loc;
+//					if(!section.cars.isEmpty()){
+//						str = "Cars:\n";
+//						for(Car car : section.cars){
+//							str += car.name + " " + car.getDir();
+//							str += "\n";
+//						}
+//					}
+//				}
+//				MainActivity.sectionDialog = new AlertDialog.Builder(MainActivity.getActContext())
+//				.setTitle(loc.name)
+//				.setMessage(str)
+//				.show();
+				MainActivity.updateFocus(loc);
 			}
 			else if(MainActivity.selectedPage == 1){
 				if(MainActivity.delivSrc.getText().equals("")){
@@ -169,7 +170,7 @@ public class TrafficMap {
 					if(MainActivity.selectedCar != car)
 						MainActivity.spinner.setSelection(which);
 						
-					MainActivity.setselectedCar(which);
+					MainActivity.setSelectedCar(which);
 					//send car setting
 					AppPkg p = new AppPkg();
 					p.setCar(car.name, car.dir, car.loc.name);
@@ -262,13 +263,12 @@ public class TrafficMap {
 		citizen.view.color = citizen.color;
 		citizen.view.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				if(v instanceof CitizenView){
-					Citizen c = ((CitizenView ) v).citizen;
-					new AlertDialog.Builder(MainActivity.getActContext())
-					.setTitle(c.name)
-					.setMessage(c.act)
-					.show();
-				}
+				Citizen c = ((CitizenView ) v).citizen;
+//				new AlertDialog.Builder(MainActivity.getActContext())
+//				.setTitle(c.name)
+//				.setMessage(c.act)
+//				.show();
+				MainActivity.updateFocus(c);
 			}
 		});
 //		citizen.view.setOnClickListener(new MyClickListener(building));

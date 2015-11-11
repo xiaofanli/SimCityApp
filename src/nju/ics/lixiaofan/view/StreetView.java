@@ -3,6 +3,7 @@ package nju.ics.lixiaofan.view;
 import nju.ics.lixiaofan.view.MapView.Coord;
 
 import com.example.simcity.Car;
+import com.example.simcity.MainActivity;
 import com.example.simcity.TrafficMap;
 import com.example.simcity.Section.Street;
 
@@ -57,6 +58,11 @@ public class StreetView  extends View{
 		}
 		paint.setStyle(Style.FILL);
 		canvas.drawRoundRect(rect, coord.arcw, coord.arch, paint);
+		if(MainActivity.focus == street){
+			paint.setStyle(Style.STROKE);
+			paint.setColor(Color.RED);
+			canvas.drawRoundRect(rect, coord.arcw, coord.arch, paint);
+		}
 		
 		if(n > 0){
 			int x = isVertical ? (coord.w - CarView.SIZE) / 2 : (coord.w-n*CarView.SIZE-(n-1)*CarView.INSET) / 2;
@@ -85,7 +91,10 @@ public class StreetView  extends View{
 				}
 				paint.setStyle(Style.FILL);
 				canvas.drawRect(x, y, x+CarView.SIZE, y+CarView.SIZE, paint);
-				paint.setColor(Color.BLACK);
+				if(MainActivity.focus != car)
+					paint.setColor(Color.BLACK);
+				else
+					paint.setColor(Color.RED);
 				paint.setStyle(Style.STROKE);
 				canvas.drawRect(x, y, x+CarView.SIZE, y+CarView.SIZE, paint);
 				if(isVertical)

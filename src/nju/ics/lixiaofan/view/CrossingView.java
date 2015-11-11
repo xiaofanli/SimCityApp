@@ -3,6 +3,7 @@ package nju.ics.lixiaofan.view;
 import nju.ics.lixiaofan.view.MapView.Coord;
 
 import com.example.simcity.Car;
+import com.example.simcity.MainActivity;
 import com.example.simcity.Section.Crossing;
 import com.example.simcity.TrafficMap;
 
@@ -49,6 +50,11 @@ public class CrossingView extends View{
 		}
 		paint.setStyle(Style.FILL);
 		canvas.drawCircle(SIZE/2, SIZE/2, SIZE/2, paint);
+		if(MainActivity.focus == crossing){
+			paint.setStyle(Style.STROKE);
+			paint.setColor(Color.RED);
+			canvas.drawCircle(SIZE/2, SIZE/2, SIZE/2, paint);
+		}
 		
 		if(n > 0){
 			int x = (coord.w-n*CarView.SIZE-(n-1)*CarView.INSET) / 2;
@@ -74,7 +80,10 @@ public class CrossingView extends View{
 				}
 				paint.setStyle(Style.FILL);
 				canvas.drawRect(x, y, x+CarView.SIZE, y+CarView.SIZE, paint);
-				paint.setColor(Color.BLACK);
+				if(MainActivity.focus != car)
+					paint.setColor(Color.BLACK);
+				else
+					paint.setColor(Color.RED);
 				paint.setStyle(Style.STROKE);
 				canvas.drawRect(x, y, x+CarView.SIZE, y+CarView.SIZE, paint);
 				x += CarView.SIZE + CarView.INSET;

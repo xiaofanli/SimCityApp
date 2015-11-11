@@ -11,5 +11,6 @@
     <string name="map_add_view">MAP_ADD_VIEW</string>
     <string name="citizen_update_location">CITIZEN_UPDATE_LOCATION</string>
     <string name="citizen_set_visibility">CITIZEN_SET_VISIBILITY</string>
+    <string name="update_focus">UPDATE_FOCUS</string>
 
 </resources>

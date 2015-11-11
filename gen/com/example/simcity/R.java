@@ -45,10 +45,10 @@ public final class R {
         public static final int radioWest=0x7f080007;
         public static final int spinnerCar=0x7f080003;
         public static final int tabStrip=0x7f080002;
-        public static final int textView1=0x7f080016;
-        public static final int textView_car=0x7f08000d;
+        public static final int textView_delivery=0x7f080016;
         public static final int textView_dst=0x7f080011;
         public static final int textView_dst_label=0x7f080010;
+        public static final int textView_focus=0x7f08000d;
         public static final int textView_line=0x7f08000c;
         public static final int textView_line2=0x7f080015;
         public static final int textView_src=0x7f08000f;
@@ -75,6 +75,7 @@ public final class R {
         public static final int invalidate_view=0x7f050007;
         public static final int map_add_view=0x7f050008;
         public static final int spinner_add_car=0x7f050006;
+        public static final int update_focus=0x7f05000b;
     }
     public static final class style {
         /** 
