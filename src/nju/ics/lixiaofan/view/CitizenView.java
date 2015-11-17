@@ -32,6 +32,9 @@ public class CitizenView extends View{
 	
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
+		canvas.save(Canvas.MATRIX_SAVE_FLAG);
+		canvas.scale(((MapView) getParent()).getScaleFactor(), ((MapView) getParent()).getScaleFactor());
+		
 		paint.setColor(color);
 		paint.setStyle(Style.FILL);
 		canvas.drawCircle(SIZE/2, SIZE/2, SIZE/2, paint);
@@ -43,6 +46,7 @@ public class CitizenView extends View{
 		paint.setStyle(Style.STROKE);
 		canvas.drawCircle(SIZE/2, SIZE/2, SIZE/2, paint);
 //		canvas.drawRect(0, 0, SIZE, SIZE, paint);
+		canvas.restore();
 	}
 	
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {

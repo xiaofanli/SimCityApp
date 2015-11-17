@@ -58,8 +58,15 @@ public class PkgHandler implements Runnable{
 			switch (p.type) {
 			case 1:{
 				Car car = Car.carOf(p.car);
-				if(car != null)
+				if(car != null){
 					car.dir = p.dir;
+					if(car == MainActivity.focus){
+						Message msg = MainActivity.msgHandler.obtainMessage();
+						msg.arg1 = R.string.update_focus;
+						msg.obj = MainActivity.focus;
+						MainActivity.msgHandler.sendMessage(msg);
+					}
+				}
 				break;
 			}
 			case 3:{
@@ -83,6 +90,13 @@ public class PkgHandler implements Runnable{
 					else{
 						car.dir = p.dir;
 						TrafficMap.carEnter(car, sect);
+					}
+					
+					if(car == MainActivity.focus || sect == MainActivity.focus || sect.isCombined && sect.combined.contains(MainActivity.focus)){
+						Message msg = MainActivity.msgHandler.obtainMessage();
+						msg.arg1 = R.string.update_focus;
+						msg.obj = MainActivity.focus;
+						MainActivity.msgHandler.sendMessage(msg);
 					}
 				}
 				break;
@@ -140,6 +154,12 @@ public class PkgHandler implements Runnable{
 				for(Citizen c : TrafficMap.citizens)
 					if(c.name.equals(p.citizen)){
 						c.act = p.act;
+						if(c == MainActivity.focus){
+							Message msg = MainActivity.msgHandler.obtainMessage();
+							msg.arg1 = R.string.update_focus;
+							msg.obj = MainActivity.focus;
+							MainActivity.msgHandler.sendMessage(msg);
+						}
 						break;
 					}
 				break;

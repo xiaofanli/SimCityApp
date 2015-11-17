@@ -47,6 +47,9 @@ public class StreetView  extends View{
 
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
+		canvas.save(Canvas.MATRIX_SAVE_FLAG);
+		canvas.scale(((MapView) getParent()).getScaleFactor(), ((MapView) getParent()).getScaleFactor());
+		
 		int n = street.cars.size();
 		switch(n){
 		case 0:
@@ -111,6 +114,8 @@ public class StreetView  extends View{
 			FontMetricsInt fontMetrics = paint.getFontMetricsInt();
 			canvas.drawText(""+id, rect.centerX(), rect.centerY()-(fontMetrics.bottom-fontMetrics.top)/2-fontMetrics.top, paint);
 		}
+		
+		canvas.restore();
 	}
 	
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {

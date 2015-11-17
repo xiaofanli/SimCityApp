@@ -25,6 +25,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -78,9 +80,8 @@ public class MainActivity extends Activity{
 				map.addView((View)msg.obj);
 				break;
 			case R.string.citizen_update_location:
-				if(msg.obj instanceof CitizenView){
+				if(msg.obj instanceof CitizenView)
 					((View) msg.obj).requestLayout();
-				}
 				break;
 			case R.string.citizen_set_visibility:
 				if(msg.obj instanceof CitizenView)
@@ -117,9 +118,11 @@ public class MainActivity extends Activity{
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
 		appCtx = getApplicationContext();
 		actCtx = this;
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		map = (MapView) findViewById(R.id.mapView);
 		map.setWillNotDraw(false);
 		new TrafficMap(map);
@@ -186,53 +189,41 @@ public class MainActivity extends Activity{
 		dirButton[0].setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				selectedCar.dir = 0;
-				AppPkg p = new AppPkg();
-				p.setDir(selectedCar.name, selectedCar.dir);
-				PkgHandler.send(p);
+				PkgHandler.send(new AppPkg().setDir(selectedCar.name, selectedCar.dir));
 			}
 		});
 		dirButton[1] = (RadioButton) viewContainter.get(0).findViewById(R.id.radioSouth);
 		dirButton[1].setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				selectedCar.dir = 1;
-				AppPkg p = new AppPkg();
-				p.setDir(selectedCar.name, selectedCar.dir);
-				PkgHandler.send(p);
+				PkgHandler.send(new AppPkg().setDir(selectedCar.name, selectedCar.dir));
 			}
 		});
 		dirButton[2] = (RadioButton) viewContainter.get(0).findViewById(R.id.radioWest);
 		dirButton[2].setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				selectedCar.dir = 2;
-				AppPkg p = new AppPkg();
-				p.setDir(selectedCar.name, selectedCar.dir);
-				PkgHandler.send(p);
+				PkgHandler.send(new AppPkg().setDir(selectedCar.name, selectedCar.dir));
 			}
 		});
 		dirButton[3] = (RadioButton) viewContainter.get(0).findViewById(R.id.radioEast);
 		dirButton[3].setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				selectedCar.dir = 3;
-				AppPkg p = new AppPkg();
-				p.setDir(selectedCar.name, selectedCar.dir);
-				PkgHandler.send(p);
+				PkgHandler.send(new AppPkg().setDir(selectedCar.name, selectedCar.dir));
 			}
 		});
 		
 		forwardButton = (Button) viewContainter.get(0).findViewById(R.id.button_forward);
 		forwardButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				AppPkg p = new AppPkg();
-				p.setCmd(selectedCar.name, (byte) 1);
-				PkgHandler.send(p);
+				PkgHandler.send(new AppPkg().setCmd(selectedCar.name, 1));
 			}
 		});
 		stopButton = (Button) viewContainter.get(0).findViewById(R.id.button_stop);
 		stopButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				AppPkg p = new AppPkg();
-				p.setCmd(selectedCar.name, (byte) 0);
-				PkgHandler.send(p);
+				PkgHandler.send(new AppPkg().setCmd(selectedCar.name, 0));
 			}
 		});
 		if(spinner.getSelectedItem() == null){
@@ -246,9 +237,7 @@ public class MainActivity extends Activity{
 		delivButton = (Button) viewContainter.get(1).findViewById(R.id.button_deliver);
 		delivButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				AppPkg p = new AppPkg();
-				p.setDelivery(delivSrc.getText().toString(), delivDst.getText().toString());
-				PkgHandler.send(p);
+				PkgHandler.send(new AppPkg().setDelivery(delivSrc.getText().toString(), delivDst.getText().toString()));
 			}
 		});
 		deleteButton = (Button) viewContainter.get(1).findViewById(R.id.button_delete);
@@ -306,7 +295,7 @@ public class MainActivity extends Activity{
 				}
 				else{
 					dirButton[selectedCar.loc.dir[0]].setChecked(true);
-					selectedCar.dir = (byte) selectedCar.loc.dir[0];
+					selectedCar.dir = selectedCar.loc.dir[0];
 				}
 			}
 			else{

@@ -159,9 +159,7 @@ public class TrafficMap {
 				Car car = cars.get(MainActivity.spinnerAdapter.getItem(which));
 //				System.out.println(car.name);
 				if(section.cars.contains(car)){
-					AppPkg p = new AppPkg();
-					p.setCar(car.name, car.dir, car.loc.name);
-					PkgHandler.send(p);
+					PkgHandler.send(new AppPkg().setCar(car.name, car.dir, car.loc.name));
 					car.dir = -1;
 					carLeave(car, car.loc);
 				}
@@ -172,9 +170,7 @@ public class TrafficMap {
 						
 					MainActivity.setSelectedCar(which);
 					//send car setting
-					AppPkg p = new AppPkg();
-					p.setCar(car.name, car.dir, car.loc.name);
-					PkgHandler.send(p);
+					PkgHandler.send(new AppPkg().setCar(car.name, car.dir, car.loc.name));
 				}
 				dialog.dismiss();
 			}

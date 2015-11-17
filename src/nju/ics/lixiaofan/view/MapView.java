@@ -1,24 +1,31 @@
 package nju.ics.lixiaofan.view;
 
 import android.content.Context;
-import android.graphics.Canvas;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
 
 public class MapView extends ViewGroup{
 	public static boolean showSections = false;
+	private ScaleGestureDetector mScaleDetector;
+	private float mScaleFactor = 1.f;
 	
 	public MapView(Context context) {
 		super(context);
+		mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
 	}
 	
 	public MapView(Context context, AttributeSet attrs) {
 		super(context, attrs);
+		mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
 	}
 	
 	public MapView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
+		mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
 	}
 	
 	protected void onLayout(boolean changed, int l, int t, int r, int b) {
@@ -93,21 +100,97 @@ public class MapView extends ViewGroup{
 				x = (int) (((CitizenView)child).ratioX * getWidth());
 				y = (int) (((CitizenView)child).ratioY * getHeight());
 			}
-			child.layout(x, y, x+cw, y+ch);
+			x += xOffset;
+			y += yOffset;
+			child.layout((int) (x * mScaleFactor), (int) (y * mScaleFactor),
+					(int) ((x + cw) * mScaleFactor),
+					(int) ((y + ch) * mScaleFactor));
 		}
 	}
 
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		measureChildren(widthMeasureSpec, heightMeasureSpec);
 		int size = Math.min(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.getSize(heightMeasureSpec));
 		setMeasuredDimension(size, size);
+		measureChildren(widthMeasureSpec, heightMeasureSpec);
 	}
 	
-	protected void onDraw(Canvas canvas) {
-		super.onDraw(canvas);
-		int count = getChildCount();
-		for(int i = 0;i < count;i++)
-			getChildAt(i).invalidate();
+	private int xOffset = 0, yOffset = 0;
+	private float dX, dY;
+	public boolean onTouchEvent(MotionEvent event) {
+		mScaleDetector.onTouchEvent(event);
+	    switch (event.getActionMasked()) {
+        case MotionEvent.ACTION_MOVE:
+        	if(touchPoint == 1){
+	        	xOffset += event.getX() - dX;
+	        	yOffset += event.getY() - dY;
+	        	dX = event.getX();
+	        	dY = event.getY();
+	        	requestLayout();
+        	}
+            break;
+	    }
+		return true;
+	}
+	
+	public boolean onInterceptTouchEvent(MotionEvent event) {
+		switch (event.getActionMasked()) {
+		case MotionEvent.ACTION_MOVE:
+			return true;
+		default:
+			break;
+		}
+		return false;
+	}
+	
+	private int touchPoint = 0;
+	public boolean dispatchTouchEvent(MotionEvent event) {
+		switch (event.getActionMasked()) {
+		case MotionEvent.ACTION_DOWN:
+//			Log.i("touchPoint", "ACTION_DOWN");
+//			Log.i("touchPoint", event.getX()+" "+event.getY());
+			dX = event.getX();
+            dY = event.getY();
+			touchPoint = 1;
+//			Log.i("touchPoint", touchPoint+"");
+			break;
+		case MotionEvent.ACTION_POINTER_DOWN:
+			touchPoint++;
+//			Log.i("touchPoint", touchPoint+"");
+			break;
+		case MotionEvent.ACTION_POINTER_UP:
+//			Log.i("touchPoint", "ACTION_POINTER_UP");
+//			Log.i("touchPoint", event.getX()+" "+event.getY());
+			touchPoint--;
+			if(touchPoint == 1){
+				dX = event.getX(1-event.getActionIndex());
+	            dY = event.getY(1-event.getActionIndex());
+			}
+//			Log.i("touchPoint", touchPoint+"");
+			break;
+		case MotionEvent.ACTION_UP:
+			touchPoint = 0;
+//			Log.i("touchPoint", touchPoint+"");
+			break;
+		default:
+			break;
+		}
+		return super.dispatchTouchEvent(event);
+	}
+	
+	private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+	    public boolean onScale(ScaleGestureDetector detector) {
+//	    	Log.i("SCALE", "onScale " + detector.getScaleFactor());
+	        mScaleFactor *= detector.getScaleFactor();
+	        // Don't let the object get too small or too large.
+	        mScaleFactor = Math.max(0.5f, Math.min(mScaleFactor, 2.0f));
+	        requestLayout();
+//	        invalidate();
+	        return true;
+	    }
+	}
+	
+	public float getScaleFactor(){
+		return mScaleFactor;
 	}
 	
 	public static class Coord{

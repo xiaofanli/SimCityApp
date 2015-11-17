@@ -38,11 +38,15 @@ public class BuildingView extends ImageView{
 	
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
+		canvas.save(Canvas.MATRIX_SAVE_FLAG);
+		canvas.scale(((MapView) getParent()).getScaleFactor(), ((MapView) getParent()).getScaleFactor());
+		
 		if(MainActivity.focus == building){
 			paint.setColor(Color.RED);
 			paint.setStyle(Style.STROKE);
 			canvas.drawRect(0, 0, SIZE, SIZE, paint);
 		}
+		canvas.restore();
 	}
 	
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
