@@ -23,7 +23,7 @@ import com.example.simcity.Section;
 import com.example.simcity.TrafficMap;
 
 public class PkgHandler implements Runnable{
-	private static String pc = "114.212.85.205";//"192.168.1.100";
+	private static String pc = "114.212.84.93";//"192.168.1.100";
 	private static Queue<AppPkg> queue = new LinkedList<AppPkg>();
 	private static Sender sender = new Sender();
 	private static Receiver receiver = new Receiver(queue);

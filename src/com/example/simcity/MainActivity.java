@@ -25,12 +25,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -117,6 +121,7 @@ public class MainActivity extends Activity{
 	};
 	
 	protected void onCreate(Bundle savedInstanceState) {
+//		System.out.println("onCreate");
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
@@ -131,8 +136,10 @@ public class MainActivity extends Activity{
 		tabStrip.setDrawFullUnderline(false);
 		viewContainter.add(LayoutInflater.from(this).inflate(R.layout.tab_car, null));
 		viewContainter.add(LayoutInflater.from(this).inflate(R.layout.tab_delivery, null));
+		viewContainter.add(LayoutInflater.from(this).inflate(R.layout.tab_options, null));
 		titleContainer.add("Car");
 		titleContainer.add("Delivery");
+		titleContainer.add("Options");
 		
 		pager.setAdapter(new PagerAdapter() {
 			public boolean isViewFromObject(View arg0, Object arg1) {
@@ -143,12 +150,13 @@ public class MainActivity extends Activity{
 				return viewContainter.size();
 			}
 			
-			public void destroyItem(View container, int position, Object object) {
-				((ViewPager) container).removeView(viewContainter.get(position));
+			public void destroyItem(ViewGroup container, int position, Object object) {
+//				container.removeView(viewContainter.get(position));
+				container.removeView((View) object);
 			}
 			
-			public Object instantiateItem(View container, int position) {
-				((ViewPager) container).addView(viewContainter.get(position));
+			public Object instantiateItem(ViewGroup container, int position) {
+				container.addView(viewContainter.get(position));
                 return viewContainter.get(position);
 			}
 			
@@ -251,6 +259,26 @@ public class MainActivity extends Activity{
 					delivSrc.setText("");
 					deleteButton.setEnabled(false);
 				}
+			}
+		});
+		
+		((CheckBox) viewContainter.get(2).findViewById(R.id.checkBox_sections)).setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				MapView.showSections = isChecked;
+				map.drawSections();
+			}
+		});
+		
+		((CheckBox) viewContainter.get(2).findViewById(R.id.checkBox_track)).setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+			}
+		});
+		
+		((Button) viewContainter.get(2).findViewById(R.id.button_resetMap)).setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				map.setScaleFactor(1);
+				map.setOffset(0, 0);
+				map.requestLayout();
 			}
 		});
 		new Thread(new PkgHandler()).start();

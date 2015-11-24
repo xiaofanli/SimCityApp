@@ -33,11 +33,14 @@ public final class R {
         public static final int button_delete=0x7f080014;
         public static final int button_deliver=0x7f080013;
         public static final int button_forward=0x7f08000a;
+        public static final int button_resetMap=0x7f080019;
         public static final int button_stop=0x7f08000b;
+        public static final int checkBox_sections=0x7f080017;
+        public static final int checkBox_track=0x7f080018;
         public static final int linearLayout1=0x7f080009;
         public static final int linearLayout2=0x7f080012;
         public static final int mapView=0x7f080000;
-        public static final int menu_sections=0x7f080017;
+        public static final int menu_sections=0x7f08001a;
         public static final int radioEast=0x7f080008;
         public static final int radioGroupDir=0x7f080004;
         public static final int radioNorth=0x7f080005;
@@ -59,6 +62,7 @@ public final class R {
         public static final int activity_main=0x7f030000;
         public static final int tab_car=0x7f030001;
         public static final int tab_delivery=0x7f030002;
+        public static final int tab_options=0x7f030003;
     }
     public static final class menu {
         public static final int main=0x7f070000;

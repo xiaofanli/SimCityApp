@@ -1,6 +1,7 @@
 package nju.ics.lixiaofan.view;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -116,6 +117,12 @@ public class MapView extends ViewGroup{
 	
 	private int xOffset = 0, yOffset = 0;
 	private float dX, dY;
+	
+	public void setOffset(int x, int y){
+		xOffset = x;
+		yOffset = y;
+	}
+	
 	public boolean onTouchEvent(MotionEvent event) {
 		mScaleDetector.onTouchEvent(event);
 	    switch (event.getActionMasked()) {
@@ -191,6 +198,19 @@ public class MapView extends ViewGroup{
 	
 	public float getScaleFactor(){
 		return mScaleFactor;
+	}
+	
+	public void setScaleFactor(float factor){
+		mScaleFactor = factor;
+	}
+	
+	public void drawSections(){
+		int childCount = getChildCount();
+		for(int i = 0;i < childCount;i++){
+			View child = getChildAt(i);
+			if(child instanceof StreetView || child instanceof CrossingView)
+				child.invalidate();
+		}
 	}
 	
 	public static class Coord{
