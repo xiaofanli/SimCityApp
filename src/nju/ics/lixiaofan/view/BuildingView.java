@@ -60,23 +60,23 @@ public class BuildingView extends ImageView{
 		switch (building.type) {
 		case "StarkIndustries":
 //			setImageResource(R.drawable.stark_industries);
-			readBitmap(MainActivity.getAppContext(), R.drawable.stark_industries);
+			readBitmap(MainActivity.getAppCtx(), R.drawable.stark_industries);
 			break;
 		case "Hospital":
 //			setImageResource(R.drawable.hospital);
-			readBitmap(MainActivity.getAppContext(), R.drawable.hospital);
+			readBitmap(MainActivity.getAppCtx(), R.drawable.hospital);
 			break;
 		case "School":
 //			setImageResource(R.drawable.nju);
-			readBitmap(MainActivity.getAppContext(), R.drawable.nju);
+			readBitmap(MainActivity.getAppCtx(), R.drawable.nju);
 			break;
 		case "PoliceStation":
 //			setImageResource(R.drawable.shield);
-			readBitmap(MainActivity.getAppContext(), R.drawable.shield);
+			readBitmap(MainActivity.getAppCtx(), R.drawable.shield);
 			break;
 		case "Restaurant":
 //			setImageResource(R.drawable.java);
-			readBitmap(MainActivity.getAppContext(), R.drawable.java);
+			readBitmap(MainActivity.getAppCtx(), R.drawable.java);
 			break;
 		default:
 			break;

@@ -7,6 +7,7 @@ import com.example.simcity.Section.Street;
 
 import nju.ics.lixiaofan.monitor.AppPkg;
 import nju.ics.lixiaofan.monitor.PkgHandler;
+import nju.ics.lixiaofan.view.BalloonView;
 import nju.ics.lixiaofan.view.CitizenView;
 import nju.ics.lixiaofan.view.MapView;
 
@@ -63,10 +64,10 @@ public class MainActivity extends Activity{
 		public void handleMessage(Message msg) {
 			switch (msg.arg1) {
 			case R.string.app_connected:
-				Toast.makeText(MainActivity.getAppContext(), "Connected", Toast.LENGTH_LONG).show();
+				Toast.makeText(MainActivity.getAppCtx(), "Connected", Toast.LENGTH_LONG).show();
 				break;
 			case R.string.app_disconnected:
-				Toast.makeText(MainActivity.getAppContext(), "Disconnected", Toast.LENGTH_LONG).show();
+				Toast.makeText(MainActivity.getAppCtx(), "Disconnected", Toast.LENGTH_LONG).show();
 				break;
 			case R.string.close_section_dialog:
 				if(sectionDialog != null && sectionDialog.isShowing())
@@ -87,9 +88,11 @@ public class MainActivity extends Activity{
 				if(msg.obj instanceof CitizenView)
 					((View) msg.obj).requestLayout();
 				break;
-			case R.string.citizen_set_visibility:
+			case R.string.set_visibility:
 				if(msg.obj instanceof CitizenView)
 					((CitizenView) msg.obj).setVisibility(msg.arg2);
+				else if(msg.obj instanceof BalloonView)
+					((BalloonView) msg.obj).setVisibility(msg.arg2);
 				break;
 			case R.string.update_focus:
 				if(msg.obj instanceof String){
@@ -387,11 +390,11 @@ public class MainActivity extends Activity{
 		focus = obj;
 	}
 	
-	public static Context getAppContext(){
+	public static Context getAppCtx(){
 		return appCtx;
 	}
 	
-	public static Context getActContext(){
+	public static Context getActCtx(){
 		return actCtx;
 	}
 }

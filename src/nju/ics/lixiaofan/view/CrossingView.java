@@ -47,9 +47,18 @@ public class CrossingView extends View{
 		case 0:
 			paint.setColor(Color.GREEN); break;
 		case 1:
-			paint.setColor(Color.YELLOW); break;
+			paint.setColor(Color.YELLOW); 
+			if(crossing.realCars.isEmpty())
+				paint.setColor(Color.YELLOW);
+			else{
+				paint.setColor(Color.RED);
+				TrafficMap.playCrashSound();
+			}
+			break;
 		default:
-			paint.setColor(Color.RED); break;
+			paint.setColor(Color.RED); 
+			TrafficMap.playCrashSound();
+			break;
 		}
 		paint.setStyle(Style.FILL);
 		canvas.drawCircle(SIZE/2, SIZE/2, SIZE/2, paint);
@@ -59,6 +68,7 @@ public class CrossingView extends View{
 			canvas.drawCircle(SIZE/2, SIZE/2, SIZE/2, paint);
 		}
 		
+		n += crossing.realCars.size();
 		if(n > 0){
 			int x = (coord.w-n*CarView.SIZE-(n-1)*CarView.INSET) / 2;
 			int y = (coord.h - CarView.SIZE) / 2;
@@ -83,12 +93,44 @@ public class CrossingView extends View{
 				}
 				paint.setStyle(Style.FILL);
 				canvas.drawRect(x, y, x+CarView.SIZE, y+CarView.SIZE, paint);
-				if(MainActivity.focus != car)
-					paint.setColor(Color.BLACK);
-				else
-					paint.setColor(Color.RED);
+				paint.setColor(MainActivity.focus != car ? Color.BLACK : Color.RED);
 				paint.setStyle(Style.STROKE);
 				canvas.drawRect(x, y, x+CarView.SIZE, y+CarView.SIZE, paint);
+				if(car.realLoc != null){
+					paint.setTextSize(CarView.SIZE);
+					paint.setTextAlign(Align.CENTER);
+					FontMetricsInt fontMetrics = paint.getFontMetricsInt();
+					canvas.drawText("FAKE", x+CarView.SIZE/2, 
+						y+CarView.SIZE/2-(fontMetrics.bottom-fontMetrics.top)/2-fontMetrics.top, paint);
+				}
+				x += CarView.SIZE + CarView.INSET;
+			}
+			
+			for(String car : crossing.realCars){
+				switch(car){
+				case Car.ORANGE:
+					paint.setColor(0xffffa500); break;
+				case Car.BLACK:
+					paint.setColor(Color.BLACK); break;
+				case Car.WHITE:
+					paint.setColor(Color.WHITE); break;
+				case Car.RED:
+					paint.setColor(Color.RED); break;
+				case Car.GREEN:
+					paint.setColor(Color.GREEN); break;
+				case Car.SILVER:
+					paint.setColor(0xffc0c0c0); break;
+				}
+				paint.setStyle(Style.FILL);
+				canvas.drawRect(x, y, x+CarView.SIZE, y+CarView.SIZE, paint);
+				paint.setColor(Color.BLACK);
+				paint.setStyle(Style.STROKE);
+				canvas.drawRect(x, y, x+CarView.SIZE, y+CarView.SIZE, paint);
+				paint.setTextSize(CarView.SIZE);
+				paint.setTextAlign(Align.CENTER);
+				FontMetricsInt fontMetrics = paint.getFontMetricsInt();
+				canvas.drawText("REAL", x+CarView.SIZE/2, 
+					y+CarView.SIZE/2-(fontMetrics.bottom-fontMetrics.top)/2-fontMetrics.top, paint);
 				x += CarView.SIZE + CarView.INSET;
 			}
 		}
@@ -109,6 +151,6 @@ public class CrossingView extends View{
 		int ph = MeasureSpec.getSize(heightMeasureSpec);
 		SIZE = (int) (Math.min(pw, ph)*SIZE_PERCENT);
 		coord.w = coord.h = SIZE;
-        setMeasuredDimension(SIZE, SIZE);                
+        setMeasuredDimension(coord.w, coord.h);                
 	}
 }

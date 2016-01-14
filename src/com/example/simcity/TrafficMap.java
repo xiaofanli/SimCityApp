@@ -1,6 +1,7 @@
 package com.example.simcity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -8,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import nju.ics.lixiaofan.monitor.AppPkg;
 import nju.ics.lixiaofan.monitor.PkgHandler;
+import nju.ics.lixiaofan.view.BalloonView;
 import nju.ics.lixiaofan.view.BuildingView;
 import nju.ics.lixiaofan.view.CitizenView;
 import nju.ics.lixiaofan.view.CrossingView;
@@ -17,6 +19,8 @@ import nju.ics.lixiaofan.view.StreetView;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Message;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -40,14 +44,22 @@ public class TrafficMap {
 	private static final int cw = (int) (sh * 1.5);//crossing width
 	private static final int aw = cw / 2;
 	
+	private static SoundPool soundPool;
+	private static HashMap<String, Integer> soundMap;
+	
 	public TrafficMap(MapView map) {
+		soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
+		soundMap = new HashMap<String, Integer>();
+		soundMap.put("crash", soundPool.load(MainActivity.getAppCtx(), R.raw.crash, 1));
+		soundMap.put("oh no", soundPool.load(MainActivity.getAppCtx(), R.raw.oh_no, 1));
+		
 		int sectIdx = 0;
 		for(int i = 0;i < crossings.length;i++){
 			crossings[i] = new Crossing();
 			sections[sectIdx++] = crossings[i];
 			crossings[i].id = i;
 			crossings[i].name = "Crossing "+i;
-			crossings[i].view = new CrossingView(MainActivity.getAppContext());
+			crossings[i].view = new CrossingView(MainActivity.getAppCtx());
 			crossings[i].view.id = i;
 			crossings[i].view.crossing = crossings[i];
 			MyClickListener listener = new MyClickListener(crossings[i]);
@@ -61,7 +73,7 @@ public class TrafficMap {
 			sections[sectIdx++] = streets[i];
 			streets[i].id = i;
 			streets[i].name = "Street "+i;
-			streets[i].view = new StreetView(MainActivity.getAppContext());
+			streets[i].view = new StreetView(MainActivity.getAppCtx());
 			streets[i].view.id = i;
 			streets[i].view.street = streets[i];
 			streets[i].view.isVertical = ((i%8)>1 && (i%8)<6);
@@ -69,6 +81,14 @@ public class TrafficMap {
 			streets[i].view.setOnClickListener(listener);
 			streets[i].view.setOnLongClickListener(listener);
 			map.addView(streets[i].view);
+		}
+		
+		BalloonView.readBalloonImage();
+		for(Section section : sections){
+			section.balloon = new BalloonView(MainActivity.getAppCtx());
+			section.balloon.section = section;
+			map.addView(section.balloon);
+//			section.displayBalloon(1, "B1S2", Car.ORANGE, false);
 		}
 		
 		setCombined();
@@ -81,8 +101,17 @@ public class TrafficMap {
 		StreetView.WIDTH_PERCENT = 2 * StreetView.HEIGHT_PERCENT;
 		BuildingView.SIZE_PERCENT = StreetView.WIDTH_PERCENT;
 		CrossingView.SIZE_PERCENT = 1.5 * StreetView.HEIGHT_PERCENT;
+		BalloonView.SIZE_PERCENT = StreetView.WIDTH_PERCENT;
 		
 		new Thread(blinkThread).start();
+	}
+	
+	public static void playCrashSound() {
+		soundPool.play(soundMap.get("crash"), 1.0f, 1.0f, 1, 0, 1.0f);
+	}
+	
+	public static void playOhNoSound() {
+		soundPool.play(soundMap.get("oh no"), 1.0f, 1.0f, 1, 0, 1.0f);
 	}
 	
 	private static class MyClickListener implements OnClickListener, OnLongClickListener{
@@ -139,7 +168,7 @@ public class TrafficMap {
 					if(MainActivity.spinnerAdapter.getCount() > 0){
 						scl.set(section);
 	//					System.out.println(section.name);
-						new AlertDialog.Builder(MainActivity.getActContext())
+						new AlertDialog.Builder(MainActivity.getActCtx())
 						.setTitle(section.name).setSingleChoiceItems(MainActivity.spinnerAdapter, -1, scl)
 						.show();
 					}
@@ -240,7 +269,7 @@ public class TrafficMap {
 	
 	public static void add(Building building){
 		buildings.add(building);
-		building.view = new BuildingView(MainActivity.getAppContext());
+		building.view = new BuildingView(MainActivity.getAppCtx());
 		building.view.building = building;
 		building.view.setOnClickListener(new MyClickListener(building));
 		building.view.setIcon();
@@ -254,7 +283,7 @@ public class TrafficMap {
 	
 	public static void add(Citizen citizen){
 		citizens.add(citizen);
-		citizen.view = new CitizenView(MainActivity.getAppContext());
+		citizen.view = new CitizenView(MainActivity.getAppCtx());
 		citizen.view.citizen = citizen;
 		citizen.view.color = citizen.color;
 		citizen.view.setOnClickListener(new OnClickListener() {
@@ -401,31 +430,41 @@ public class TrafficMap {
 	}
 	
 	private static Runnable blinkThread = new Runnable() {
+		private int duration = 500;
 		public void run() {
 			while(true){
 				blink = !blink;
-				for(Crossing c : crossings){
-					if(c.cars.isEmpty())
-						continue;
-					if(c.cars.size() > 1 || c.cars.peek().isLoading){
+				for(Section s : sections){
+					if(s.balloon.duration > 0){
+						if(s.balloon.getVisibility() != View.VISIBLE){
+							Message msg = MainActivity.msgHandler.obtainMessage();
+							msg.arg1 = R.string.set_visibility;
+							msg.arg2 = View.VISIBLE;
+							msg.obj = s.balloon;
+							MainActivity.msgHandler.sendMessage(msg);
+						}
+						s.balloon.duration -= duration;
+					}
+					else if(s.balloon.getVisibility() == View.VISIBLE){
 						Message msg = MainActivity.msgHandler.obtainMessage();
-						msg.arg1 = R.string.invalidate_view;
-						msg.obj = c.view;
+						msg.arg1 = R.string.set_visibility;
+						msg.arg2 = View.INVISIBLE;
+						msg.obj = s.balloon;
 						MainActivity.msgHandler.sendMessage(msg);
 					}
-				}
-				for(Street s : streets){
+					
 					if(s.cars.isEmpty())
 						continue;
 					if(s.cars.size() > 1 || s.cars.peek().isLoading){
 						Message msg = MainActivity.msgHandler.obtainMessage();
 						msg.arg1 = R.string.invalidate_view;
-						msg.obj = s.view;
+						msg.obj = s instanceof Crossing ? ((Crossing) s).view : ((Street) s).view;
 						MainActivity.msgHandler.sendMessage(msg);
 					}
 				}
+				
 				try {
-					Thread.sleep(500);
+					Thread.sleep(duration);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

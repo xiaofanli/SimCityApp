@@ -6,6 +6,7 @@ public class Car {
 	public int state = 0;//0: still	1: moving	-1: uncertain
 	public int dir = -1;//0: N	1: S	2: W	3: E
 	public Section loc = null;
+	public Section realLoc = null;//if this car become a phantom, then this variable stores it's real location
 	public Section dest = null;
 	public boolean isLoading = false;
 	

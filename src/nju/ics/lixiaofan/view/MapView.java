@@ -1,5 +1,8 @@
 package nju.ics.lixiaofan.view;
 
+import com.example.simcity.Section.Crossing;
+import com.example.simcity.Section.Street;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
@@ -31,28 +34,28 @@ public class MapView extends ViewGroup{
 	
 	protected void onLayout(boolean changed, int l, int t, int r, int b) {
 //		System.out.println(l+" "+t+" "+r+" "+b);
-		int cw = 0, ch = 0, x = 0, y = 0, id, childCount = getChildCount();
+		int cw = 0, ch = 0, x = 0, y = 0, childCount = getChildCount();
 		for(int i = 0;i < childCount;i++){
 			View child = getChildAt(i);
 			cw = child.getMeasuredWidth();
 			ch = child.getMeasuredHeight();
 			if(child instanceof StreetView){
-				id = ((StreetView)child).id;
-				int quotient = id / 8;
-				int remainder = id % 8;
+				StreetView view = (StreetView) child;
+				int quotient = view.id / 8;
+				int remainder = view.id % 8;
 				//vertical streets
-				if(((StreetView)child).isVertical){
+				if(view.isVertical){
 					switch (quotient) {
 					case 0:case 2:
 						x = (remainder-1) * (CrossingView.SIZE+StreetView.WIDTH);
 						y = (quotient==0) ? 0:(CrossingView.SIZE+StreetView.WIDTH)*2+(StreetView.HEIGHT+CrossingView.SIZE)/2;
-						if(id == 21)
+						if(view.id == 21)
 							y -= (StreetView.HEIGHT+CrossingView.SIZE)/2;
 						break;
 					case 1:case 3:
 						x = (remainder-2) * (CrossingView.SIZE+StreetView.WIDTH);
 						y = quotient*(CrossingView.SIZE+StreetView.WIDTH)+(StreetView.HEIGHT+CrossingView.SIZE)/2;
-						if(id == 10 || id == 26)
+						if(view.id == 10 || view.id == 26)
 							y -=(StreetView.HEIGHT+CrossingView.SIZE)/2;
 						break;
 					}
@@ -67,11 +70,11 @@ public class MapView extends ViewGroup{
 					case 7:
 						x = (remainder-6)*(CrossingView.SIZE+StreetView.WIDTH)+(StreetView.HEIGHT+CrossingView.SIZE)/2;
 						y = (quotient+1) * (CrossingView.SIZE+StreetView.WIDTH);
-						if(id == 31)
+						if(view.id == 31)
 							x += StreetView.WIDTH+(CrossingView.SIZE-StreetView.HEIGHT)/2;
 						break;
 					case 0:case 1:
-						if(id > 1){
+						if(view.id > 1){
 							x = (remainder+2)*(CrossingView.SIZE+StreetView.WIDTH)+(StreetView.HEIGHT+CrossingView.SIZE)/2;
 							y = quotient * (CrossingView.SIZE+StreetView.WIDTH);
 						}
@@ -82,12 +85,21 @@ public class MapView extends ViewGroup{
 						break;
 					}
 				}
+				view.coord.x = x;
+				view.coord.y = y;
+				view.coord.centerX = view.coord.x + view.coord.w / 2;
+				view.coord.centerY = view.coord.y + view.coord.h / 2;
 			}
 			else if(child instanceof CrossingView){
+				CrossingView view = (CrossingView) child;
 				x = (StreetView.HEIGHT+CrossingView.SIZE)/2 + StreetView.WIDTH + 
-						(((CrossingView)child).id%3) * (CrossingView.SIZE + StreetView.WIDTH);
+						(view.id%3) * (CrossingView.SIZE + StreetView.WIDTH);
 				y = (StreetView.HEIGHT+CrossingView.SIZE)/2 + StreetView.WIDTH + 
-						(((CrossingView)child).id/3) * (CrossingView.SIZE + StreetView.WIDTH);
+						(view.id/3) * (CrossingView.SIZE + StreetView.WIDTH);
+				view.coord.x = x;
+				view.coord.y = y;
+				view.coord.centerX = view.coord.x + view.coord.w / 2;
+				view.coord.centerY = view.coord.y + view.coord.h / 2;
 			}
 			else if(child instanceof BuildingView){
 				int block = ((BuildingView) child).building.block;
@@ -98,14 +110,21 @@ public class MapView extends ViewGroup{
 				y += (block / 4) * u;
 			}
 			else if(child instanceof CitizenView){
-				x = (int) (((CitizenView)child).ratioX * getWidth());
-				y = (int) (((CitizenView)child).ratioY * getHeight());
+				x = (int) (((CitizenView) child).ratioX * getWidth());
+				y = (int) (((CitizenView) child).ratioY * getHeight());
 			}
+			else if(child instanceof BalloonView){
+				BalloonView view = (BalloonView) child;
+				Coord coord = view.section instanceof Crossing ? ((Crossing) view.section).view.coord
+						: ((Street) view.section).view.coord;
+				x = coord.centerX - BalloonView.SIZE / 2;
+				y = coord.centerY - BalloonView.SIZE;
+			}
+			
 			x += xOffset;
 			y += yOffset;
 			child.layout((int) (x * mScaleFactor), (int) (y * mScaleFactor),
-					(int) ((x + cw) * mScaleFactor),
-					(int) ((y + ch) * mScaleFactor));
+					(int) ((x + cw) * mScaleFactor), (int) ((y + ch) * mScaleFactor));
 		}
 	}
 

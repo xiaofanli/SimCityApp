@@ -23,7 +23,7 @@ import com.example.simcity.Section;
 import com.example.simcity.TrafficMap;
 
 public class PkgHandler implements Runnable{
-	private static String pc = "114.212.84.93";//"192.168.1.100";
+	private static String pc = "114.212.85.87";//"192.168.1.100";
 	private static Queue<AppPkg> queue = new LinkedList<AppPkg>();
 	private static Sender sender = new Sender();
 	private static Receiver receiver = new Receiver(queue);
@@ -180,7 +180,7 @@ public class PkgHandler implements Runnable{
 				for(Citizen c : TrafficMap.citizens)
 					if(c.name.equals(p.citizen)){
 						Message msg = MainActivity.msgHandler.obtainMessage();
-						msg.arg1 = R.string.citizen_set_visibility;
+						msg.arg1 = R.string.set_visibility;
 						msg.arg2 = p.isVisible ? View.VISIBLE : View.INVISIBLE;
 						msg.obj = c.view;
 						MainActivity.msgHandler.sendMessage(msg);
@@ -188,6 +188,26 @@ public class PkgHandler implements Runnable{
 						break;
 					}
 				break;
+			case 14:{
+				Car car = Car.carOf(p.car);
+				if(car != null){
+					if(p.realLoc == null){
+						car.realLoc.realCars.remove(p.car);
+						car.realLoc = null;
+					}
+					else{
+						car.realLoc = Section.sectionOf(p.realLoc);
+						car.realLoc.realCars.add(p.car);
+					}
+				}
+				break;
+			}
+			case 15:{
+				Section section = Section.sectionOf(p.section);
+				if(section != null)
+					section.displayBalloon(p.ctxType, p.sensor, p.car, p.isResolutionEnabled);
+				break;
+			}
 			}
 		}
 	}
