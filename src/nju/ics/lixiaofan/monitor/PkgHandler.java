@@ -27,6 +27,8 @@ public class PkgHandler implements Runnable{
 	private static ObjectInputStream in = null;
 	private static ObjectOutputStream out = null;
 	private static boolean isConnected = false;
+	private static final String IP = "192.168.1.100";
+	private static final int PORT = 11111;
 	public PkgHandler() {
 		new Thread(receiver).start();
 		new Thread(sender).start();
@@ -194,7 +196,7 @@ public class PkgHandler implements Runnable{
 			while(true){
 				while(!isConnected){
 					try {
-						socket = new Socket("192.168.1.100", 11111);
+						socket = new Socket(IP, PORT);
 						in = new ObjectInputStream(socket.getInputStream());
 						out = new ObjectOutputStream(socket.getOutputStream());
 						isConnected = true;
