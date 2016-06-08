@@ -169,7 +169,7 @@ public class TrafficMap {
 		car.loc = section;
 		
 		Message msg = MainActivity.msgHandler.obtainMessage();
-		msg.arg1 = R.string.invalidate_view;
+		msg.what = R.string.invalidate_view;
 		if(section instanceof Crossing)
 			msg.obj = ((Crossing) section).view;
 		else if(section instanceof Street)
@@ -180,7 +180,7 @@ public class TrafficMap {
 			for(Section s : section.combined){
 				s.isOccupied = true;
 				msg = MainActivity.msgHandler.obtainMessage();
-				msg.arg1 = R.string.invalidate_view;
+				msg.what = R.string.invalidate_view;
 				if(s instanceof Crossing)
 					msg.obj = ((Crossing) s).view;
 				else if(s instanceof Street)
@@ -199,7 +199,7 @@ public class TrafficMap {
 			car.loc = null;
 		
 		Message msg = MainActivity.msgHandler.obtainMessage();
-		msg.arg1 = R.string.invalidate_view;
+		msg.what = R.string.invalidate_view;
 		if(section instanceof Crossing)
 			msg.obj = ((Crossing) section).view;
 		else if(section instanceof Street)
@@ -210,7 +210,7 @@ public class TrafficMap {
 			for(Section s : section.combined){
 				s.isOccupied = !s.cars.isEmpty();
 				msg = MainActivity.msgHandler.obtainMessage();
-				msg.arg1 = R.string.invalidate_view;
+				msg.what = R.string.invalidate_view;
 				if(s instanceof Crossing)
 					msg.obj = ((Crossing) s).view;
 				else if(s instanceof Street)
@@ -352,7 +352,7 @@ public class TrafficMap {
 						continue;
 					if(c.cars.size() > 1 || c.cars.peek().isLoading){
 						Message msg = MainActivity.msgHandler.obtainMessage();
-						msg.arg1 = R.string.invalidate_view;
+						msg.what = R.string.invalidate_view;
 						msg.obj = c.view;
 						MainActivity.msgHandler.sendMessage(msg);
 					}
@@ -362,7 +362,7 @@ public class TrafficMap {
 						continue;
 					if(s.cars.size() > 1 || s.cars.peek().isLoading){
 						Message msg = MainActivity.msgHandler.obtainMessage();
-						msg.arg1 = R.string.invalidate_view;
+						msg.what = R.string.invalidate_view;
 						msg.obj = s.view;
 						MainActivity.msgHandler.sendMessage(msg);
 					}

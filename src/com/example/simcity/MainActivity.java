@@ -49,7 +49,7 @@ public class MainActivity extends Activity{
 	
 	public static final Handler msgHandler = new Handler(){
 		public void handleMessage(Message msg) {
-			switch (msg.arg1) {
+			switch (msg.what) {
 			case R.string.app_connected:
 				Toast.makeText(MainActivity.getAppContext(), "Connected", Toast.LENGTH_LONG).show();
 				break;

@@ -66,7 +66,7 @@ public class PkgHandler implements Runnable{
 					car = new Car();
 					car.name = p.car;
 					Message msg = MainActivity.msgHandler.obtainMessage();
-					msg.arg1 = R.string.spinner_add_car;
+					msg.what = R.string.spinner_add_car;
 					msg.obj = car.name;
 					MainActivity.msgHandler.sendMessage(msg);
 					TrafficMap.cars.put(car.name, car);
@@ -169,7 +169,7 @@ public class PkgHandler implements Runnable{
 					if(isConnected){
 						isConnected = false;
 						Message msg = MainActivity.msgHandler.obtainMessage();
-						msg.arg1 = R.string.app_disconnected;
+						msg.what = R.string.app_disconnected;
 						MainActivity.msgHandler.sendMessage(msg);
 					}
 				}
@@ -201,7 +201,7 @@ public class PkgHandler implements Runnable{
 						out = new ObjectOutputStream(socket.getOutputStream());
 						isConnected = true;
 						Message msg = MainActivity.msgHandler.obtainMessage();//new Message();
-						msg.arg1 = R.string.app_connected;
+						msg.what = R.string.app_connected;
 						MainActivity.msgHandler.sendMessage(msg);
 						synchronized (queue) {
 							queue.clear();
@@ -236,7 +236,7 @@ public class PkgHandler implements Runnable{
 						if(isConnected){
 							isConnected = false;
 							Message msg = MainActivity.msgHandler.obtainMessage();
-							msg.arg1 = R.string.app_disconnected;
+							msg.what = R.string.app_disconnected;
 							MainActivity.msgHandler.sendMessage(msg);
 						}
 						break;
